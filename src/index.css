@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Palette pulled directly from the live Tabet site build
+ * (Tabet Website Builder/index.html Tailwind config + inline styles):
+ * brand navy #09295F, hover blue #17499F, gold #C8890A, teal tag accent
+ * #0AACE0, plus its neutral text/border scale. Kept as the single source
+ * of truth so this tool and the marketing site stay visually consistent.
+ */
+:root {
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #0b1523;
+  --card: #ffffff;
+  --card-foreground: #0b1523;
+  --popover: #ffffff;
+  --popover-foreground: #0b1523;
+  --primary: #09295f;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f5fa;
+  --secondary-foreground: #0b1523;
+  --muted: #f0f5fa;
+  --muted-foreground: #6b82a0;
+  --accent: #fbf1e0;
+  --accent-foreground: #0b1523;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #d0dce8;
+  --input: #d0dce8;
+  --ring: #17499f;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: 'Barlow', ui-sans-serif, sans-serif;
+  --font-heading: 'Barlow Condensed', ui-sans-serif, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* Lets a re-run of dagre (on expand/collapse) glide nodes to their new
+   position instead of snapping — this is what makes the flow "move the
+   others out of the way" instead of jumping. Excluded while a node is
+   actively being dragged so manual drags stay responsive. */
+.react-flow__node {
+  transition: transform 300ms ease, opacity 200ms ease;
+}
+.react-flow__node.dragging {
+  transition: none;
+}
