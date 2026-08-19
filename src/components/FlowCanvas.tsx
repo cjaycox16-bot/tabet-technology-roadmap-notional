@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useImperativeHandle } from 'react'
+import { useCallback, useEffect, useImperativeHandle, useRef } from 'react'
 import {
   addEdge,
   Background,
   Controls,
   MarkerType,
+  MiniMap,
   ReactFlow,
   useEdgesState,
   useNodesState,
@@ -19,9 +20,15 @@ import type { FlowNode } from '../layout/buildGraph'
 import { loadLayout, saveLayout, clearLayout, type StoredCustomEdge } from '../persistence/layoutStorage'
 import { useRoadmap } from '../context/RoadmapContext'
 import { PipelineNode } from './nodes/PipelineNode'
+import { RoutedEdge } from './edges/RoutedEdge'
+import { ROLE_STYLE } from './nodes/roleStyles'
 
 const nodeTypes = {
   pipelineNode: PipelineNode,
+}
+
+const edgeTypes = {
+  systemRoute: RoutedEdge,
 }
 
 const CUSTOM_EDGE_STYLE = { stroke: '#0AACE0', strokeWidth: 2, strokeDasharray: '2 5' }
@@ -55,34 +62,35 @@ export function FlowCanvas({
   const { fitView } = useReactFlow()
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState<FlowNode>([])
   const [edges, setEdges, onEdgesChangeInternal] = useEdgesState<Edge>([])
+  // ELK's layout pass is async — guard against an older request resolving
+  // after a newer one (e.g. rapid expand/collapse clicks).
+  const layoutRequestId = useRef(0)
 
   const applyBaseLayout = useCallback(() => {
-    const base = computeBaseLayout(data, expandedNodeIds, filters, showSystemsOverlay)
-    const stored = loadLayout()
-    const visibleIds = new Set(base.nodes.map((n) => n.id))
+    const requestId = ++layoutRequestId.current
+    computeBaseLayout(data, expandedNodeIds, filters, showSystemsOverlay).then((base) => {
+      if (requestId !== layoutRequestId.current) return
 
-    const mergedNodes = base.nodes.map((node) => {
-      const override = stored.positions[node.id]
-      return override ? { ...node, position: override } : node
+      const stored = loadLayout()
+      const visibleIds = new Set(base.nodes.map((n) => n.id))
+
+      const mergedNodes = base.nodes.map((node) => {
+        const override = stored.positions[node.id]
+        return override ? { ...node, position: override } : node
+      })
+      const customEdges = stored.customEdges
+        .filter((ce) => visibleIds.has(ce.source) && visibleIds.has(ce.target))
+        .map(customEdgeToFlowEdge)
+
+      setNodes(mergedNodes)
+      setEdges([...base.edges, ...customEdges])
+      requestAnimationFrame(() => fitView({ padding: 0.2, duration: 300 }))
     })
-    const customEdges = stored.customEdges
-      .filter((ce) => visibleIds.has(ce.source) && visibleIds.has(ce.target))
-      .map(customEdgeToFlowEdge)
-
-    setNodes(mergedNodes)
-    setEdges([...base.edges, ...customEdges])
-  }, [data, expandedNodeIds, filters, showSystemsOverlay, setNodes, setEdges])
+  }, [data, expandedNodeIds, filters, showSystemsOverlay, setNodes, setEdges, fitView])
 
   useEffect(() => {
     applyBaseLayout()
   }, [applyBaseLayout])
-
-  useEffect(() => {
-    // Re-fit whenever a node expands/collapses (its footprint changed) —
-    // not on every drag, so dragging a node doesn't yank the viewport.
-    const id = requestAnimationFrame(() => fitView({ padding: 0.2, duration: 300 }))
-    return () => cancelAnimationFrame(id)
-  }, [expandedNodeIds, data, fitView])
 
   useImperativeHandle(handleRef, () => ({
     resetLayout: () => {
@@ -139,16 +147,24 @@ export function FlowCanvas({
       nodes={nodes}
       edges={edges}
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       onNodesChange={handleNodesChange}
       onEdgesChange={handleEdgesChange}
       onConnect={handleConnect}
       deleteKeyCode={['Backspace', 'Delete']}
       fitView
       fitViewOptions={{ padding: 0.2 }}
-      minZoom={0.15}
+      minZoom={0.1}
     >
       <Background color="#D0DCE8" />
       <Controls />
+      <MiniMap
+        pannable
+        zoomable
+        position="top-right"
+        maskColor="rgba(9, 41, 95, 0.06)"
+        nodeColor={(node) => ROLE_STYLE[(node as FlowNode).data.node.role]?.accent ?? '#94A3B8'}
+      />
     </ReactFlow>
   )
 }

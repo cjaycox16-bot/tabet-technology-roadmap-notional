@@ -7,8 +7,6 @@ import { Badge } from '../ui/badge'
 
 type PipelineNodeProps = NodeProps<Extract<FlowNode, { type: 'pipelineNode' }>>
 
-const SYSTEM_HANDLE_OFFSETS = ['25%', '50%', '75%']
-
 export function PipelineNode({ data }: PipelineNodeProps) {
   const { selectNode, toggleNodeExpanded } = useRoadmap()
   const { node, expanded, dimmed } = data
@@ -22,17 +20,6 @@ export function PipelineNode({ data }: PipelineNodeProps) {
       onClick={() => selectNode(node.id)}
     >
       <Handle type="target" position={Position.Top} style={{ background: role.accent }} />
-      {/* Extra invisible anchor points so parallel system/data-flow overlay
-          edges fan out instead of stacking on the single default handle. */}
-      {SYSTEM_HANDLE_OFFSETS.map((left, i) => (
-        <Handle
-          key={`sys-target-${i}`}
-          id={`sys-target-${i}`}
-          type="target"
-          position={Position.Top}
-          style={{ left, opacity: 0, pointerEvents: 'none' }}
-        />
-      ))}
 
       <div className="flex items-start gap-2 px-3 pt-2.5" style={{ background: role.tint }}>
         <span
@@ -93,15 +80,6 @@ export function PipelineNode({ data }: PipelineNodeProps) {
       )}
 
       <Handle type="source" position={Position.Bottom} style={{ background: role.accent }} />
-      {SYSTEM_HANDLE_OFFSETS.map((left, i) => (
-        <Handle
-          key={`sys-source-${i}`}
-          id={`sys-source-${i}`}
-          type="source"
-          position={Position.Bottom}
-          style={{ left, opacity: 0, pointerEvents: 'none' }}
-        />
-      ))}
     </div>
   )
 }
