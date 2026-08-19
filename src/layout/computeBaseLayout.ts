@@ -102,7 +102,7 @@ function buildSystemEdges(
   )
 
   return data.systemConnections.map((sc) => {
-    const dimmed =
+    const filterDimmed =
       !matches.get(sc.source) || !matches.get(sc.target) || !systemConnectionMatchesFilters(sc, filters)
 
     return {
@@ -113,14 +113,12 @@ function buildSystemEdges(
       deletable: false,
       selectable: false,
       animated: sc.animated,
-      data: { points: routes.get(sc.id) ?? [], dasharray: dasharrayForLineStyle(sc.lineStyle) },
-      style: {
-        stroke: sc.lineColor,
-        strokeWidth: sc.lineWidth,
-        opacity: dimmed ? 0.1 : 0.75,
-      },
+      // Opacity/weight are computed live in RoutedEdge from hover/selection
+      // state, not baked in here — that's what lets hovering a stage
+      // highlight just its own connections without re-running the layout.
+      data: { points: routes.get(sc.id) ?? [], dasharray: dasharrayForLineStyle(sc.lineStyle), filterDimmed },
+      style: { stroke: sc.lineColor, strokeWidth: sc.lineWidth },
       markerEnd: { type: MarkerType.ArrowClosed, color: sc.lineColor, width: 14, height: 14 },
-      zIndex: dimmed ? 0 : 1,
     }
   })
 }

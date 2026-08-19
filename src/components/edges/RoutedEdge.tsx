@@ -1,4 +1,5 @@
 import { BaseEdge, type EdgeProps } from '@xyflow/react'
+import { useRoadmap } from '../../context/RoadmapContext'
 import type { RoutePoint } from '../../layout/routeSystemEdges'
 
 /**
@@ -33,10 +34,32 @@ function roundedPath(points: RoutePoint[], radius = 14): string {
   return d
 }
 
-export function RoutedEdge({ id, data, markerEnd, style }: EdgeProps) {
+/**
+ * Opacity/weight depends on what's focused (hovered or selected) right now,
+ * read live from context rather than baked in at layout time — so hovering
+ * across 18 stages doesn't require re-running ELK or the bus router, just a
+ * cheap re-render of these ~44 edge components.
+ */
+export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeProps) {
+  const { focusNodeId } = useRoadmap()
   const points = (data?.points as RoutePoint[] | undefined) ?? []
   const dasharray = data?.dasharray as string | undefined
+  const filterDimmed = Boolean(data?.filterDimmed)
   if (points.length < 2) return null
 
-  return <BaseEdge id={id} path={roundedPath(points)} markerEnd={markerEnd} style={{ ...style, strokeDasharray: dasharray }} />
+  const isFocused = focusNodeId !== null && (source === focusNodeId || target === focusNodeId)
+  const isEclipsed = focusNodeId !== null && !isFocused
+
+  const baseWidth = typeof style?.strokeWidth === 'number' ? style.strokeWidth : 2
+  const opacity = filterDimmed ? 0.04 : isFocused ? 0.95 : isEclipsed ? 0.04 : 0.18
+  const strokeWidth = isFocused ? baseWidth + 1.5 : baseWidth
+
+  return (
+    <BaseEdge
+      id={id}
+      path={roundedPath(points)}
+      markerEnd={markerEnd}
+      style={{ ...style, strokeDasharray: dasharray, opacity, strokeWidth }}
+    />
+  )
 }

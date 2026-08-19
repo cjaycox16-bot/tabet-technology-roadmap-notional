@@ -8,7 +8,7 @@ import { Badge } from '../ui/badge'
 type PipelineNodeProps = NodeProps<Extract<FlowNode, { type: 'pipelineNode' }>>
 
 export function PipelineNode({ data }: PipelineNodeProps) {
-  const { selectNode, toggleNodeExpanded } = useRoadmap()
+  const { selectNode, toggleNodeExpanded, setHoveredNode } = useRoadmap()
   const { node, expanded, dimmed } = data
   const role = ROLE_STYLE[node.role]
   const status = STATUS_STYLE[node.status]
@@ -18,6 +18,8 @@ export function PipelineNode({ data }: PipelineNodeProps) {
       className="flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-lg border bg-white shadow-sm transition-[opacity,box-shadow] hover:shadow-md"
       style={{ borderColor: role.accent, opacity: dimmed ? 0.25 : 1 }}
       onClick={() => selectNode(node.id)}
+      onMouseEnter={() => setHoveredNode(node.id)}
+      onMouseLeave={() => setHoveredNode(null)}
     >
       <Handle type="target" position={Position.Top} style={{ background: role.accent }} />
 

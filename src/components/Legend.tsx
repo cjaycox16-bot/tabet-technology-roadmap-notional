@@ -59,7 +59,7 @@ export function Legend({ data }: { data: RoadmapData }) {
             </div>
           ))}
           <p className="mt-1.5 border-t border-[#E8EFF6] pt-1.5 text-[10px] leading-snug text-[#94A3B8]">
-            Click a stage to see which systems connect to it.
+            Hover or click a stage to see which systems connect to it.
           </p>
         </div>
       )}

@@ -8,6 +8,10 @@ interface RoadmapContextValue {
   collapseAll: () => void
   selectedNodeId: string | null
   selectNode: (nodeId: string | null) => void
+  hoveredNodeId: string | null
+  setHoveredNode: (nodeId: string | null) => void
+  /** hoveredNodeId if set, else selectedNodeId — the stage whose system connections should be highlighted. */
+  focusNodeId: string | null
   filters: FilterState
   toggleLane: (lane: string) => void
   toggleStatus: (status: string) => void
@@ -23,6 +27,7 @@ const RoadmapContext = createContext<RoadmapContextValue | null>(null)
 export function RoadmapProvider({ children }: { children: ReactNode }) {
   const [expandedNodeIds, setExpandedNodeIds] = useState<Set<string>>(new Set())
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [lanes, setLanes] = useState<Set<string>>(new Set())
   const [statuses, setStatuses] = useState<Set<string>>(new Set())
   const [systemCategories, setSystemCategories] = useState<Set<string>>(new Set())
@@ -44,6 +49,9 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
       collapseAll: () => setExpandedNodeIds(new Set()),
       selectedNodeId,
       selectNode: setSelectedNodeId,
+      hoveredNodeId,
+      setHoveredNode: setHoveredNodeId,
+      focusNodeId: hoveredNodeId ?? selectedNodeId,
       filters: { lanes, statuses, systemCategories, search },
       toggleLane: (lane: string) => {
         setLanes((prev) => {
@@ -79,7 +87,7 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
       showSystemsOverlay,
       toggleSystemsOverlay: () => setShowSystemsOverlay((prev) => !prev),
     }),
-    [expandedNodeIds, selectedNodeId, lanes, statuses, systemCategories, search, showSystemsOverlay],
+    [expandedNodeIds, selectedNodeId, hoveredNodeId, lanes, statuses, systemCategories, search, showSystemsOverlay],
   )
 
   return <RoadmapContext.Provider value={value}>{children}</RoadmapContext.Provider>
