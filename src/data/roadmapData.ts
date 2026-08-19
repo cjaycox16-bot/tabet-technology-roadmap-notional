@@ -1,4 +1,4 @@
-// GENERATED from Tabet_Flowchart_Data_Framework.xlsx — do not hand-edit, rerun the ETL script instead.
+// GENERATED from Tabet_Flowchart_Interconnected_Systems_Framework.xlsx — do not hand-edit, rerun `node scripts/generateRoadmapData.mjs` instead.
 import type { RoadmapData } from './types'
 
 export const roadmapData: RoadmapData = {
@@ -16,56 +16,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Customer demand, RFQs, forecasts, repeat orders, market opportunities",
       "outputsSummary": "Qualified opportunity or RFQ package ready for estimating",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Sales & Quoting owner TBD",
         "inputs": "Customer demand, RFQs, forecasts, repeat orders, market opportunities",
         "majorActivities": "Capture opportunity, qualify fit, identify customer requirements, assign follow-up",
         "outputs": "Qualified opportunity or RFQ package ready for estimating",
         "qualityCheckpoints": "Customer requirement clarity; due-date and drawing/package completeness",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Opportunity details can be scattered across email, calls, and informal notes.",
+        "opportunity": "Use AI summaries and CRM discipline to standardize RFQ intake and follow-up.",
+        "timeSavings": "Notional 2-4 hours/week saved in opportunity cleanup and follow-up.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 CRM/customer master module",
+          "currentOrFuture": "Notional Current",
+          "owner": "Sales Manager / ERP Administrator",
+          "integrationDirection": "CRM opportunity data feeds quote and customer records",
+          "keyDataObjects": "Customer, contact, opportunity, RFQ, forecast demand"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "HubSpot CRM and Microsoft Outlook",
+          "currentOrFuture": "Notional Current",
+          "owner": "Sales Manager",
+          "integrationDirection": "Email and CRM activity summarized into opportunity records",
+          "keyDataObjects": "Emails, call notes, follow-up tasks, customer contacts"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Sales Opportunity Tracker.xlsx",
+          "currentOrFuture": "Notional Current",
+          "owner": "Sales Coordinator",
+          "integrationDirection": "Weekly export to flowchart app and leadership dashboard",
+          "keyDataObjects": "Opportunity stage, next action, expected RFQ date, win probability"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI RFQ intake and follow-up assistant",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Sales Manager / IT",
+          "integrationDirection": "Reads customer emails and drafts opportunity summaries for review",
+          "keyDataObjects": "Customer intent, due dates, drawings received, open questions"
         }
       ]
     },
@@ -82,56 +74,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "RFQ package, drawings, specifications, historical pricing, material assumptions",
       "outputsSummary": "Customer quote, assumptions, lead time, exclusions, follow-up tasks",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Sales & Quoting owner TBD",
         "inputs": "RFQ package, drawings, specifications, historical pricing, material assumptions",
         "majorActivities": "Estimate labor/material, assess manufacturability, price work, review quote approval needs",
         "outputs": "Customer quote, assumptions, lead time, exclusions, follow-up tasks",
         "qualityCheckpoints": "Quote review, risk review, pricing approval, manufacturability concerns logged",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Estimators may spend time searching for similar jobs, assumptions, and prior exceptions.",
+        "opportunity": "Use quote history and AI manufacturability screening to speed first-pass estimates.",
+        "timeSavings": "Notional 10-20% reduction in repeat-job quote preparation time.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 estimating and quote history",
+          "currentOrFuture": "Notional Current",
+          "owner": "Estimating Lead",
+          "integrationDirection": "Quote lines, routings, labor rates, and material assumptions move into order review",
+          "keyDataObjects": "Quote, estimate, routing template, material, price, margin"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Paperless Parts or custom quoting calculator",
+          "currentOrFuture": "Notional Current",
+          "owner": "Estimating Lead",
+          "integrationDirection": "Imports drawing metadata and exports approved quote assumptions",
+          "keyDataObjects": "Drawing features, process assumptions, labor estimate, quote package"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Quote Assumptions and Win/Loss Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Sales / Estimating",
+          "integrationDirection": "Referenced during quote reviews and updated after award/loss",
+          "keyDataObjects": "Assumptions, exceptions, risk notes, quote status, award result"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI quote comparison and manufacturability screener",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Estimating Lead / Engineering",
+          "integrationDirection": "Compares new RFQs against prior jobs and flags missing inputs",
+          "keyDataObjects": "Similar jobs, labor variance, drawing risks, missing requirements"
         }
       ]
     },
@@ -148,56 +132,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Customer purchase order, accepted quote, drawings, specifications, delivery requirements",
       "outputsSummary": "Accepted order, order record, due dates, contract requirements, kickoff package",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Order Processing owner TBD",
         "inputs": "Customer purchase order, accepted quote, drawings, specifications, delivery requirements",
         "majorActivities": "Review PO, confirm scope, enter order, acknowledge terms, start change-control record",
         "outputs": "Accepted order, order record, due dates, contract requirements, kickoff package",
         "qualityCheckpoints": "Contract review, PO-to-quote match, flow-down requirements, due-date feasibility",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "PO, quote, drawing, and revision mismatches can be found late.",
+        "opportunity": "Automate PO-to-quote comparison and required-field checks before order release.",
+        "timeSavings": "Notional 1-2 hours/order saved on review rework and clarification.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 sales order and job creation",
+          "currentOrFuture": "Notional Current",
+          "owner": "Customer Service / ERP Administrator",
+          "integrationDirection": "Accepted quote converts to sales order, job, due dates, and requirements",
+          "keyDataObjects": "Sales order, job, customer PO, due date, contract requirements"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Microsoft SharePoint order package library",
+          "currentOrFuture": "Notional Current",
+          "owner": "Order Processing Lead",
+          "integrationDirection": "Stores PO, drawings, amendments, and review checklist",
+          "keyDataObjects": "PO, quote, drawings, revisions, contract review checklist"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Contract Review Exceptions Log",
+          "currentOrFuture": "Notional Current",
+          "owner": "Quality / Order Processing",
+          "integrationDirection": "Exceptions feed kickoff agenda and risk review",
+          "keyDataObjects": "PO exceptions, customer requirements, due-date concerns, approvals"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI PO-to-quote mismatch checker",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Order Processing / Quality",
+          "integrationDirection": "Compares customer PO, quote, and drawings before job release",
+          "keyDataObjects": "Terms mismatch, revision mismatch, quantity variance, missing flowdowns"
         }
       ]
     },
@@ -214,56 +190,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Order package, drawings, specifications, BOM requirements, customer notes",
       "outputsSummary": "Production-ready job package, routings, BOMs, work instructions, programming requests",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Engineering & Planning owner TBD",
         "inputs": "Order package, drawings, specifications, BOM requirements, customer notes",
         "majorActivities": "Review drawings, create/revise BOMs and routings, prepare programming, release work instructions",
         "outputs": "Production-ready job package, routings, BOMs, work instructions, programming requests",
         "qualityCheckpoints": "Engineering review, revision control, producibility questions, release approval",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Drawing revisions, BOM gaps, and routing questions can slow production release.",
+        "opportunity": "AI pre-checks can flag missing operations, unclear notes, and revision conflicts.",
+        "timeSavings": "Notional 5-10% faster engineering package release for repeat/simple jobs.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 BOM, routing, and job planning",
+          "currentOrFuture": "Notional Current",
+          "owner": "Engineering Manager",
+          "integrationDirection": "Engineering release updates BOM, routing, and production job package",
+          "keyDataObjects": "BOM, routing, operation sequence, work instructions, revisions"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "SOLIDWORKS PDM, AutoCAD, and Bluebeam",
+          "currentOrFuture": "Notional Current",
+          "owner": "Engineering Manager",
+          "integrationDirection": "Drawing and CAD metadata support BOM/routing and shop release",
+          "keyDataObjects": "CAD files, PDFs, revisions, redlines, engineering questions"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Engineering Release and Open Questions Log",
+          "currentOrFuture": "Notional Current",
+          "owner": "Engineering Coordinator",
+          "integrationDirection": "Tracks holds and open technical questions against release readiness",
+          "keyDataObjects": "Drawing status, question owner, due date, release approval"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI drawing/BOM/routing consistency checker",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Engineering / IT",
+          "integrationDirection": "Reviews released package for missing operations, revision conflicts, and BOM gaps",
+          "keyDataObjects": "Drawing notes, BOM lines, routing operations, revision references"
         }
       ]
     },
@@ -280,56 +248,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "BOM, material requirements, supplier requirements, due dates, certifications needed",
       "outputsSummary": "Purchase orders, supplier confirmations, material ETA, outside-process plan",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Supply Chain owner TBD",
         "inputs": "BOM, material requirements, supplier requirements, due dates, certifications needed",
         "majorActivities": "Source material/services, issue purchase orders, expedite, manage supplier commitments",
         "outputs": "Purchase orders, supplier confirmations, material ETA, outside-process plan",
         "qualityCheckpoints": "Approved supplier, certification requirements, due-date and specification alignment",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Material status and supplier promises can require repeated manual expediting.",
+        "opportunity": "Use ETA risk alerts and supplier-message summaries to focus attention on true blockers.",
+        "timeSavings": "Notional 3-6 hours/week saved in expedite follow-up.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 purchasing and material requirements",
+          "currentOrFuture": "Notional Current",
+          "owner": "Purchasing Manager",
+          "integrationDirection": "MRP demand creates PO requirements and supplier commitments",
+          "keyDataObjects": "Purchase order, supplier, material, outside process, promised date"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Supplier portal, Outlook, and Teams purchasing channel",
+          "currentOrFuture": "Notional Current",
+          "owner": "Purchasing Manager",
+          "integrationDirection": "Supplier emails and confirmations update PO status and expediting notes",
+          "keyDataObjects": "Supplier quotes, confirmations, expedite notes, cert requirements"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Material Shortage and Expedite Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Purchasing / Project Management",
+          "integrationDirection": "Feeds project risk review and daily production readiness meeting",
+          "keyDataObjects": "Shortage item, supplier ETA, job impact, escalation status"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI supplier ETA risk and expedite assistant",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Purchasing / Project Management",
+          "integrationDirection": "Monitors due dates and supplier messages to flag jobs at risk",
+          "keyDataObjects": "PO due dates, supplier confirmations, late risk, alternate source suggestions"
         }
       ]
     },
@@ -346,56 +306,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Incoming material, packing slips, purchase orders, certificates, outside-process returns",
       "outputsSummary": "Available material, receiving records, cert package, inventory transaction, discrepancies",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Supply Chain owner TBD",
         "inputs": "Incoming material, packing slips, purchase orders, certificates, outside-process returns",
         "majorActivities": "Receive, identify, inspect as required, record certs, move to inventory or job location",
         "outputs": "Available material, receiving records, cert package, inventory transaction, discrepancies",
         "qualityCheckpoints": "Receiving inspection, cert verification, material traceability, nonconformance trigger",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Cert review and material traceability checks can delay material availability.",
+        "opportunity": "Use OCR and requirement matching to accelerate cert validation.",
+        "timeSavings": "Notional 30-60 minutes saved per complex cert package.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 receiving and inventory transactions",
+          "currentOrFuture": "Notional Current",
+          "owner": "Receiving Lead / Materials Manager",
+          "integrationDirection": "PO receipts update material availability and job readiness",
+          "keyDataObjects": "Receipt, lot/heat, inventory location, cert, discrepancy"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Barcode receiving station and document scanner",
+          "currentOrFuture": "Notional Current",
+          "owner": "Receiving Lead",
+          "integrationDirection": "Scans packing slips and certs to the order/job record",
+          "keyDataObjects": "Barcode, packing slip, cert PDF, material tag, location"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Receiving Hold and Cert Review Log",
+          "currentOrFuture": "Notional Current",
+          "owner": "Receiving / Quality",
+          "integrationDirection": "Held material remains visible to project management and QA",
+          "keyDataObjects": "Hold reason, missing cert, inspection status, disposition"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI cert OCR and material traceability checker",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Quality / Receiving",
+          "integrationDirection": "Extracts cert data and compares against PO/spec requirements",
+          "keyDataObjects": "Heat/lot, material grade, spec, cert values, mismatch flags"
         }
       ]
     },
@@ -412,56 +364,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Released job, schedule, material status, customer commitments, risk/issues list",
       "outputsSummary": "Released/controlled shop work, schedule updates, status reporting, issue resolution",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Project Management owner TBD",
         "inputs": "Released job, schedule, material status, customer commitments, risk/issues list",
         "majorActivities": "Coordinate priorities, track milestones, manage blockers, communicate status, escalate risk",
         "outputs": "Released/controlled shop work, schedule updates, status reporting, issue resolution",
         "qualityCheckpoints": "Milestone review, customer due-date risk, resource conflicts, material readiness",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Project status is assembled from multiple systems, meetings, and informal updates.",
+        "opportunity": "Automated risk digests can highlight late material, overdue operations, and open decisions.",
+        "timeSavings": "Notional 4-8 hours/week saved in status preparation.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 job status and schedule views",
+          "currentOrFuture": "Notional Current",
+          "owner": "Project Manager",
+          "integrationDirection": "Job status, material readiness, and operation completion feed project dashboard",
+          "keyDataObjects": "Job, operation status, due date, material status, ship date"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Microsoft Project, Planner, and Teams",
+          "currentOrFuture": "Notional Current",
+          "owner": "Project Manager",
+          "integrationDirection": "Milestones and action items link back to job/order records",
+          "keyDataObjects": "Milestones, risks, action items, customer updates, blockers"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Project Milestone and Risk Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Project Manager",
+          "integrationDirection": "Feeds daily standup and customer status reporting",
+          "keyDataObjects": "Milestone, owner, risk, mitigation, next update"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI project risk summary and blocker digest",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Project Management / Leadership",
+          "integrationDirection": "Summarizes late material, overdue operations, and open questions for each job",
+          "keyDataObjects": "Schedule risk, material risk, QA hold, customer action, next best action"
         }
       ]
     },
@@ -478,56 +422,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Released cut files, material, nesting plan, job traveler, inspection criteria",
       "outputsSummary": "Cut parts, remnants/scrap data, completion status, first-piece/in-process records",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Manufacturing owner TBD",
         "inputs": "Released cut files, material, nesting plan, job traveler, inspection criteria",
         "majorActivities": "Program/nest, stage material, cut parts, record completion and material usage",
         "outputs": "Cut parts, remnants/scrap data, completion status, first-piece/in-process records",
         "qualityCheckpoints": "Material match, nest verification, first-piece dimensional check, traceability",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Material utilization, remnant use, and queue priorities may require manual coordination.",
+        "opportunity": "Use nesting recommendations and queue visibility to improve throughput and material usage.",
+        "timeSavings": "Notional 2-5% material-utilization improvement plus setup coordination savings.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 shop dispatch and operation completion",
+          "currentOrFuture": "Notional Current",
+          "owner": "Fabrication Supervisor",
+          "integrationDirection": "Released operation and completion status update job progress",
+          "keyDataObjects": "Operation, labor ticket, material issue, completion, scrap/remnant"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "SigmaNEST, OMAX Intelli-MAX, and machine controller software",
+          "currentOrFuture": "Notional Current",
+          "owner": "Laser/Waterjet Lead",
+          "integrationDirection": "Cut programs and nesting outputs support material usage and job completion",
+          "keyDataObjects": "DXF, nest, cut file, machine program, material utilization"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Cut Schedule and Remnant Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Laser/Waterjet Lead",
+          "integrationDirection": "Shows priority sequence, material availability, and remnant availability",
+          "keyDataObjects": "Machine queue, sheet/plate, remnant, priority, cut completion"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI nesting/material utilization advisor",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Fabrication / Engineering",
+          "integrationDirection": "Recommends nest grouping and flags material-utilization opportunities",
+          "keyDataObjects": "Part geometry, material, thickness, due date, scrap percentage"
         }
       ]
     },
@@ -544,56 +480,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Cut parts, bend programs, tooling requirements, drawings, setup instructions",
       "outputsSummary": "Formed parts, production status, setup notes, dimensional checks",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Manufacturing owner TBD",
         "inputs": "Cut parts, bend programs, tooling requirements, drawings, setup instructions",
         "majorActivities": "Select tooling, set up brake, form parts, verify critical dimensions",
         "outputs": "Formed parts, production status, setup notes, dimensional checks",
         "qualityCheckpoints": "Tooling/setup verification, first-piece inspection, bend angle and feature checks",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Setup knowledge and tooling lessons may remain with individual operators.",
+        "opportunity": "Capture prior setup notes and suggest tooling/sequences for repeat work.",
+        "timeSavings": "Notional 10-15 minutes saved per repeat setup.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 bending operation status",
+          "currentOrFuture": "Notional Current",
+          "owner": "Fabrication Supervisor",
+          "integrationDirection": "Operation dispatch and completion update downstream readiness",
+          "keyDataObjects": "Operation, traveler, labor, completion, rework status"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Press brake offline programming and tooling database",
+          "currentOrFuture": "Notional Current",
+          "owner": "Bending Lead",
+          "integrationDirection": "Bend programs and tooling setup instructions support first-piece approval",
+          "keyDataObjects": "Bend program, tool list, setup sheet, bend sequence, angle data"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Bend Setup and Tooling Notes Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Bending Lead",
+          "integrationDirection": "Captures lessons learned for repeat jobs and difficult setups",
+          "keyDataObjects": "Tooling, setup note, first-piece result, correction factor"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI bend setup and sequence suggestion",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Fabrication / Engineering",
+          "integrationDirection": "Suggests tooling/sequence from drawing features and prior setups",
+          "keyDataObjects": "Material, thickness, bend angles, tooling, prior setup notes"
         }
       ]
     },
@@ -610,56 +538,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Material/parts, CNC programs, tooling, drawings, inspection requirements",
       "outputsSummary": "Machined parts, inspection records, setup/cycle notes, work-center status",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Manufacturing owner TBD",
         "inputs": "Material/parts, CNC programs, tooling, drawings, inspection requirements",
         "majorActivities": "Program/setup machine, machine features, inspect critical dimensions, record completion",
         "outputs": "Machined parts, inspection records, setup/cycle notes, work-center status",
         "qualityCheckpoints": "Program verification, tooling verification, first-piece/in-process inspection",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Programming, tooling, and cycle estimates can be hard to compare across prior jobs.",
+        "opportunity": "Use feature recognition and cycle-time history to improve estimates and setup planning.",
+        "timeSavings": "Notional 5-10% reduction in estimate/programming research time.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 machining operation status",
+          "currentOrFuture": "Notional Current",
+          "owner": "Machine Shop Supervisor",
+          "integrationDirection": "Machining dispatch, labor, and completion status feed project schedule",
+          "keyDataObjects": "Operation, labor, setup, cycle time, completion, NCR status"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Mastercam, Fusion 360, and CNC controller software",
+          "currentOrFuture": "Notional Current",
+          "owner": "Programming / Machining Lead",
+          "integrationDirection": "Programs and setup sheets support machining operation release",
+          "keyDataObjects": "CAM file, NC program, setup sheet, tool list, inspection features"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Tooling and Cycle-Time Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Machining Lead",
+          "integrationDirection": "Captures actual versus estimated cycle time and tooling lessons",
+          "keyDataObjects": "Tool, setup time, cycle time, operation notes, improvement ideas"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI CNC feature recognition and cycle estimate",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Machining / Estimating",
+          "integrationDirection": "Reviews drawings/models and proposes rough setup/cycle assumptions",
+          "keyDataObjects": "Features, tolerances, material, machine class, setup/cycle estimate"
         }
       ]
     },
@@ -676,56 +596,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Cut/formed/machined parts, weld procedures, fixtures, qualifications, drawings",
       "outputsSummary": "Welded assemblies, weld records, inspection status, rework/nonconformance triggers",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Manufacturing owner TBD",
         "inputs": "Cut/formed/machined parts, weld procedures, fixtures, qualifications, drawings",
         "majorActivities": "Fit-up, tack, weld, inspect welds, document required qualification records",
         "outputs": "Welded assemblies, weld records, inspection status, rework/nonconformance triggers",
         "qualityCheckpoints": "Fit-up inspection, WPS/PQR/WPQ requirements, visual weld inspection, dimensional checks",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "WPS, qualification, fit-up notes, and inspection records can live in separate places.",
+        "opportunity": "AI-guided documentation checks can improve record completeness and reduce lookup time.",
+        "timeSavings": "Notional 1-3 hours/week saved in weld-documentation follow-up.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 welding operation status",
+          "currentOrFuture": "Notional Current",
+          "owner": "Welding Supervisor",
+          "integrationDirection": "Weld operation completion and rework status update downstream flow",
+          "keyDataObjects": "Operation, labor, assembly, completion, rework, NCR"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "WeldEye/WPS library and fixture photo database",
+          "currentOrFuture": "Notional Current",
+          "owner": "Welding Supervisor / Quality",
+          "integrationDirection": "WPS and qualification data link to job requirements",
+          "keyDataObjects": "WPS, WPQ, fixture photo, weld map, inspection note"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Welder Qualification and Fixture Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Welding / Quality",
+          "integrationDirection": "Supports assignment decisions and compliance review",
+          "keyDataObjects": "Qualification, process, expiration, fixture, job applicability"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI weld documentation and visual-inspection prompt",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Welding / Quality",
+          "integrationDirection": "Assists with weld requirement checks and prompts inspection documentation",
+          "keyDataObjects": "WPS requirement, weld photo, inspection checklist, defect flag"
         }
       ]
     },
@@ -742,56 +654,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Fabricated parts/assemblies, finish requirements, rework notes, inspection requirements",
       "outputsSummary": "Finished parts ready for coating/marking/assembly, finish status, rework notes",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Finishing & Special Processes owner TBD",
         "inputs": "Fabricated parts/assemblies, finish requirements, rework notes, inspection requirements",
         "majorActivities": "Deburr, grind, blend, surface prep, confirm cosmetic/functional finish needs",
         "outputs": "Finished parts ready for coating/marking/assembly, finish status, rework notes",
         "qualityCheckpoints": "Surface finish check, burr/sharp-edge check, dimensional impact review",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Finish expectations and rework causes may not be consistently captured.",
+        "opportunity": "Use photo standards and defect categorization to support consistent finishing decisions.",
+        "timeSavings": "Notional 5-10% reduction in recurring finish rework.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 finishing operation status",
+          "currentOrFuture": "Notional Current",
+          "owner": "Finishing Supervisor",
+          "integrationDirection": "Completion status confirms readiness for coating/marking/assembly",
+          "keyDataObjects": "Operation, labor, completion, rework, finish requirement"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Digital work instructions and finish photo standard library",
+          "currentOrFuture": "Notional Current",
+          "owner": "Finishing Supervisor / Quality",
+          "integrationDirection": "Photo standards and instructions attach to job/traveler",
+          "keyDataObjects": "Finish standard, accepted sample, defect example, instruction"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Grinding Rework and Finish Standard Log",
+          "currentOrFuture": "Notional Current",
+          "owner": "Finishing Lead",
+          "integrationDirection": "Feeds quality improvement review and repeat-job notes",
+          "keyDataObjects": "Rework reason, finish issue, labor impact, corrective action"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI finish defect classification and rework notes",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Finishing / Quality",
+          "integrationDirection": "Assists operators with identifying defect categories from photos and notes",
+          "keyDataObjects": "Finish photo, defect type, rework step, standard reference"
         }
       ]
     },
@@ -808,56 +712,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Finished parts, coating specifications, color/finish requirements, supplier/internal route",
       "outputsSummary": "Coated parts, coating records/certs, status update, discrepancy record if needed",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Finishing & Special Processes owner TBD",
         "inputs": "Finished parts, coating specifications, color/finish requirements, supplier/internal route",
         "majorActivities": "Prepare coating order, track outside/internal coating, verify certs and finish requirements",
         "outputs": "Coated parts, coating records/certs, status update, discrepancy record if needed",
         "qualityCheckpoints": "Specification verification, cert review, coating quality inspection",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Outside-process status and coating certs can be difficult to monitor in real time.",
+        "opportunity": "Use supplier status tracking and AI cert review to prevent late surprises.",
+        "timeSavings": "Notional 2-4 hours/week saved in outside-process follow-up.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 outside processing and coating operations",
+          "currentOrFuture": "Notional Current",
+          "owner": "Purchasing / Project Management",
+          "integrationDirection": "Outside process PO and operation status update job schedule",
+          "keyDataObjects": "Outside process PO, coating spec, due date, receipt, cert"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Coating supplier portal and certificate repository",
+          "currentOrFuture": "Notional Current",
+          "owner": "Purchasing / Quality",
+          "integrationDirection": "Supplier certs and shipment status attach to job/order record",
+          "keyDataObjects": "Coating cert, color/spec, supplier status, shipment/receipt"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Outside Process Status Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Purchasing / Project Management",
+          "integrationDirection": "Highlights items offsite, due back, or awaiting cert review",
+          "keyDataObjects": "Job, supplier, sent date, due back, cert status, risk"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI coating cert review and due-back risk alert",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Quality / Purchasing",
+          "integrationDirection": "Checks returned certs against specification and flags late outside processes",
+          "keyDataObjects": "Spec, cert values, supplier ETA, late risk, discrepancy"
         }
       ]
     },
@@ -874,56 +770,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Coated/finished parts, marking requirements, artwork, labels, serialization data",
       "outputsSummary": "Marked parts, marking records, serialization/trace data, inspection status",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Finishing & Special Processes owner TBD",
         "inputs": "Coated/finished parts, marking requirements, artwork, labels, serialization data",
         "majorActivities": "Apply labels, engraving, silk screen, laser marking, verify placement and content",
         "outputs": "Marked parts, marking records, serialization/trace data, inspection status",
         "qualityCheckpoints": "MIL-STD-130 or customer requirement check, placement/content verification",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Marking content, placement, serial format, and artwork errors can be costly late-stage issues.",
+        "opportunity": "Automated artwork and requirement checks can reduce marking escapes.",
+        "timeSavings": "Notional 30-90 minutes saved per complex marking package.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 marking operation status",
+          "currentOrFuture": "Notional Current",
+          "owner": "Finishing / Assembly Supervisor",
+          "integrationDirection": "Marking completion confirms readiness for assembly/test or final QA",
+          "keyDataObjects": "Operation, traveler, serialization, completion, rework status"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Bartender label software and laser marking controller",
+          "currentOrFuture": "Notional Current",
+          "owner": "Marking Lead / Quality",
+          "integrationDirection": "Artwork, labels, and serial data are generated from job requirements",
+          "keyDataObjects": "Label template, serial number, artwork, mark file, verification record"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Serialization and Label Verification Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Quality / Marking Lead",
+          "integrationDirection": "Tracks serial/label verification and customer-specific marking rules",
+          "keyDataObjects": "Serial number, label revision, verification status, exception"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI marking artwork and requirement verification",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Quality / Marking",
+          "integrationDirection": "Compares drawing notes, customer spec, label content, and artwork before release",
+          "keyDataObjects": "Drawing note, label text, artwork, placement, serial format"
         }
       ]
     },
@@ -940,56 +828,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Kitted parts, work instructions, hardware, wiring, tools, drawings, shortages list",
       "outputsSummary": "Completed assembly, build records, shortage/rework notes, test-ready unit",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Assembly & Test owner TBD",
         "inputs": "Kitted parts, work instructions, hardware, wiring, tools, drawings, shortages list",
         "majorActivities": "Assemble components, record progress, resolve shortages, perform build checks",
         "outputs": "Completed assembly, build records, shortage/rework notes, test-ready unit",
         "qualityCheckpoints": "Assembly verification, torque/fit checks, traveler signoff, shortage closure",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Shortages and build issues can interrupt assembly flow.",
+        "opportunity": "Guided assembly and shortage prediction can reduce stops and rework.",
+        "timeSavings": "Notional 5-10% reduction in assembly interruption time.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 assembly operation and kitting status",
+          "currentOrFuture": "Notional Current",
+          "owner": "Assembly Supervisor",
+          "integrationDirection": "Assembly operations and component availability update completion forecast",
+          "keyDataObjects": "Assembly operation, kit status, labor, shortage, completion"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Digital work instructions and kitting app",
+          "currentOrFuture": "Notional Current",
+          "owner": "Assembly Supervisor / Engineering",
+          "integrationDirection": "Guided instructions and kit verification attach to job/order",
+          "keyDataObjects": "Kit list, work step, photo instruction, torque/spec check, shortage"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Assembly Shortage and Build Issue Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Assembly / Project Management",
+          "integrationDirection": "Shortages and build issues feed PM risk review and purchasing expedites",
+          "keyDataObjects": "Shortage, build issue, owner, due date, resolution"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI guided assembly and shortage predictor",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Assembly / IT",
+          "integrationDirection": "Prompts work instructions, compares kit status, and predicts assembly blockers",
+          "keyDataObjects": "BOM, kit scan, work step, historical shortage, blocker prediction"
         }
       ]
     },
@@ -1006,56 +886,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Completed assembly, test procedure, equipment, acceptance criteria, customer requirements",
       "outputsSummary": "Test results, accepted/rejected status, rework actions, final inspection package",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Assembly & Test owner TBD",
         "inputs": "Completed assembly, test procedure, equipment, acceptance criteria, customer requirements",
         "majorActivities": "Run required tests, collect results, document failures, route rework if needed",
         "outputs": "Test results, accepted/rejected status, rework actions, final inspection package",
         "qualityCheckpoints": "Procedure adherence, equipment calibration, data completeness, acceptance criteria",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Test data review and report preparation can be manual and repetitive.",
+        "opportunity": "AI anomaly detection and draft reporting can speed review while preserving approval control.",
+        "timeSavings": "Notional 30-60 minutes saved per test report package.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 test operation completion",
+          "currentOrFuture": "Notional Current",
+          "owner": "Test Lead / Quality",
+          "integrationDirection": "Test operation status updates final QA readiness",
+          "keyDataObjects": "Test operation, labor, pass/fail status, rework, completion"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "LabVIEW/test bench software and calibration database",
+          "currentOrFuture": "Notional Current",
+          "owner": "Test Lead / Quality",
+          "integrationDirection": "Test measurements and calibration status attach to the job record",
+          "keyDataObjects": "Test result, measurement, procedure, equipment, calibration record"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Test Results and Failure Log",
+          "currentOrFuture": "Notional Current",
+          "owner": "Test Lead",
+          "integrationDirection": "Feeds quality review, rework, and recurring failure analysis",
+          "keyDataObjects": "Result, failure mode, retest date, disposition, corrective action"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI test-result anomaly and report generator",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Test / Quality",
+          "integrationDirection": "Reviews measurements, flags outliers, and drafts test reports for approval",
+          "keyDataObjects": "Measurement, limit, outlier, pass/fail, report narrative"
         }
       ]
     },
@@ -1072,56 +944,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Completed/tested item, traveler, cert package, inspection plan, customer requirements",
       "outputsSummary": "Accepted product, final documentation package, shipping release or rework instruction",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Quality Assurance owner TBD",
         "inputs": "Completed/tested item, traveler, cert package, inspection plan, customer requirements",
         "majorActivities": "Final inspection, documentation review, nonconformance handling, release approval",
         "outputs": "Accepted product, final documentation package, shipping release or rework instruction",
         "qualityCheckpoints": "Final inspection, documentation completeness, cert traceability, release authorization",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Final documentation review can require checking many records across several systems.",
+        "opportunity": "AI completeness review can flag missing certs, signoffs, or inspection records.",
+        "timeSavings": "Notional 1-2 hours saved per complex final release package.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 quality status and final release",
+          "currentOrFuture": "Notional Current",
+          "owner": "Quality Manager",
+          "integrationDirection": "Final inspection and release status control shipping readiness",
+          "keyDataObjects": "Inspection operation, NCR, cert package, release status, shipment hold"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "UniPoint QMS and document control",
+          "currentOrFuture": "Notional Current",
+          "owner": "Quality Manager",
+          "integrationDirection": "NCRs, corrective actions, and document packages connect to job/order records",
+          "keyDataObjects": "Inspection plan, NCR, CAR, cert, calibration, release approval"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Final Inspection and Cert Package Checklist",
+          "currentOrFuture": "Notional Current",
+          "owner": "Quality Inspector",
+          "integrationDirection": "Tracks documentation completeness before shipping release",
+          "keyDataObjects": "Cert, inspection result, traveler signoff, missing document, release note"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI cert packet completeness and NCR trend reviewer",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Quality / IT",
+          "integrationDirection": "Checks final documentation package and summarizes recurring NCR themes",
+          "keyDataObjects": "Cert package, inspection requirement, missing doc, NCR category, trend"
         }
       ]
     },
@@ -1138,56 +1002,48 @@ export const roadmapData: RoadmapData = {
       "inputsSummary": "Released product, packing requirements, shipment documents, customer delivery requirements",
       "outputsSummary": "Customer shipment, tracking information, delivery records, invoice trigger",
       "process": {
-        "owner": "PLACEHOLDER - process owner",
+        "owner": "Shipping owner TBD",
         "inputs": "Released product, packing requirements, shipment documents, customer delivery requirements",
         "majorActivities": "Pack, label, prepare documents, ship, notify customer, close delivery tasks",
         "outputs": "Customer shipment, tracking information, delivery records, invoice trigger",
         "qualityCheckpoints": "Shipping release, packaging verification, document packet check, carrier/tracking validation",
-        "painPoints": "PLACEHOLDER - manual work, delays, duplicate entry, quality risk",
-        "opportunity": "PLACEHOLDER - improvement idea",
-        "timeSavings": "PLACEHOLDER - annual hours or time-savings estimate",
-        "notes": "Validate with the process owner before using in production."
+        "painPoints": "Shipment packets and customer notifications can be manually assembled.",
+        "opportunity": "Automated packet checks and drafted notifications can speed release to carrier.",
+        "timeSavings": "Notional 20-45 minutes saved per shipment.",
+        "notes": "Notional demo content; validate and replace with actual Tabet systems before production use."
       },
       "software": [
         {
           "category": "ERP/MRP System",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "JobBoss2 shipping release and invoice trigger",
+          "currentOrFuture": "Notional Current",
+          "owner": "Shipping Lead / Finance",
+          "integrationDirection": "Shipment closes delivery tasks and triggers invoicing workflow",
+          "keyDataObjects": "Shipment, packing list, tracking, release status, invoice trigger"
         },
         {
           "category": "Department Software",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "UPS WorldShip, FedEx Ship Manager, and carrier portals",
+          "currentOrFuture": "Notional Current",
+          "owner": "Shipping Lead",
+          "integrationDirection": "Carrier tracking and labels attach back to customer shipment record",
+          "keyDataObjects": "Carrier, tracking, label, shipment date, delivery confirmation"
         },
         {
           "category": "Spreadsheet/Tracker",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "Shipping Commitments and Documentation Tracker",
+          "currentOrFuture": "Notional Current",
+          "owner": "Shipping / Project Management",
+          "integrationDirection": "Tracks promised ship dates, document packets, and customer notifications",
+          "keyDataObjects": "Ship date, tracking, document packet, notification, delivery issue"
         },
         {
           "category": "AI/Automation",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Current / Placeholder",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
-        },
-        {
-          "category": "Future/PPS Integration",
-          "packageName": "PLACEHOLDER - enter software package",
-          "currentOrFuture": "Future / Planned",
-          "owner": "PLACEHOLDER - owner",
-          "integrationDirection": "PLACEHOLDER - integration direction",
-          "keyDataObjects": "PLACEHOLDER - key records/data objects"
+          "packageName": "AI shipment document checker and customer notification draft",
+          "currentOrFuture": "Notional Proposed",
+          "owner": "Shipping / Customer Service",
+          "integrationDirection": "Checks shipment packet and drafts customer tracking notifications",
+          "keyDataObjects": "Packing list, cert packet, tracking number, customer contact, notification text"
         }
       ]
     }
@@ -1389,5 +1245,929 @@ export const roadmapData: RoadmapData = {
     "Assembly & Test",
     "Quality Assurance",
     "Shipping"
+  ],
+  "systemConnections": [
+    {
+      "id": "conn_001",
+      "source": "sales_customer_opportunities",
+      "target": "estimating_quoting",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Opportunity-to-quote handoff",
+      "dataTransmitted": "Customer, contact, RFQ, opportunity notes, due date",
+      "triggerEvent": "Opportunity is qualified or RFQ is received",
+      "automationRole": "None / system record",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Sales / Estimating",
+      "frequency": "Per RFQ",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_002",
+      "source": "estimating_quoting",
+      "target": "order_review_processing",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Quote-to-order conversion",
+      "dataTransmitted": "Quote, pricing, assumptions, lead time, exclusions",
+      "triggerEvent": "Customer accepts quote and sends PO",
+      "automationRole": "None / system record",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Estimating / Order Processing",
+      "frequency": "Per order",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_003",
+      "source": "order_review_processing",
+      "target": "engineering_production_planning",
+      "systemName": "Microsoft SharePoint / Teams / Outlook",
+      "systemCategory": "Department Software",
+      "connectionType": "Order package release",
+      "dataTransmitted": "PO, quote, drawings, revisions, contract review checklist",
+      "triggerEvent": "Order review is accepted",
+      "automationRole": "Document routing and notification",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Order Processing / Engineering",
+      "frequency": "Per order",
+      "lineColor": "#7C3AED",
+      "lineStyle": "dash",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_004",
+      "source": "order_review_processing",
+      "target": "engineering_production_planning",
+      "systemName": "AI PO-to-quote mismatch checker",
+      "systemCategory": "AI/Automation",
+      "connectionType": "Pre-release exception alert",
+      "dataTransmitted": "PO-to-quote mismatches, revision conflicts, missing flowdowns",
+      "triggerEvent": "Order package is prepared for release",
+      "automationRole": "AI flags exceptions for human review",
+      "lifecycleStatus": "Notional Proposed",
+      "owner": "Order Processing / Quality",
+      "frequency": "Per order",
+      "lineColor": "#047857",
+      "lineStyle": "dot",
+      "lineWidth": 3,
+      "animated": true,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_005",
+      "source": "engineering_production_planning",
+      "target": "purchasing_supplier_management",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "BOM-to-purchasing demand",
+      "dataTransmitted": "BOM, material requirements, outside-process needs, due dates",
+      "triggerEvent": "Engineering releases BOM/routing",
+      "automationRole": "MRP demand generation",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Engineering / Purchasing",
+      "frequency": "Per release",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_006",
+      "source": "purchasing_supplier_management",
+      "target": "receiving_material_control",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "PO-to-receiving handoff",
+      "dataTransmitted": "PO lines, supplier, material spec, cert requirements, promised date",
+      "triggerEvent": "Purchase order is issued",
+      "automationRole": "Receiving expectation created",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Purchasing / Receiving",
+      "frequency": "Per PO",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_007",
+      "source": "receiving_material_control",
+      "target": "final_quality_assurance",
+      "systemName": "AI cert OCR and material traceability checker",
+      "systemCategory": "AI/Automation",
+      "connectionType": "Incoming cert review",
+      "dataTransmitted": "Cert data, heat/lot, material grade, PO/spec match, mismatch flags",
+      "triggerEvent": "Material and certs are received",
+      "automationRole": "AI extracts and compares certificate data for quality review",
+      "lifecycleStatus": "Notional Proposed",
+      "owner": "Receiving / Quality",
+      "frequency": "Per receipt",
+      "lineColor": "#047857",
+      "lineStyle": "dot",
+      "lineWidth": 3,
+      "animated": true,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_008",
+      "source": "receiving_material_control",
+      "target": "project_management",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Material availability update",
+      "dataTransmitted": "Receipt status, inventory location, shortages, material hold status",
+      "triggerEvent": "Material is received or placed on hold",
+      "automationRole": "Status update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Receiving / Project Management",
+      "frequency": "Daily / per receipt",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_009",
+      "source": "engineering_production_planning",
+      "target": "project_management",
+      "systemName": "Microsoft SharePoint / Teams / Outlook",
+      "systemCategory": "Department Software",
+      "connectionType": "Engineering release and open questions",
+      "dataTransmitted": "Release status, engineering questions, revision decisions, blockers",
+      "triggerEvent": "Engineering package is reviewed or changed",
+      "automationRole": "Teams notification / action item",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Engineering / Project Management",
+      "frequency": "Daily / per issue",
+      "lineColor": "#7C3AED",
+      "lineStyle": "dash",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_010",
+      "source": "project_management",
+      "target": "laser_waterjet",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Shop dispatch to laser/waterjet",
+      "dataTransmitted": "Released operation, priority, due date, material status",
+      "triggerEvent": "Job is ready to cut",
+      "automationRole": "Dispatch list",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Project Management / Fabrication",
+      "frequency": "Daily",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_011",
+      "source": "project_management",
+      "target": "bending",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Shop dispatch to bending",
+      "dataTransmitted": "Released operation, priority, due date, material status",
+      "triggerEvent": "Job is ready to bend",
+      "automationRole": "Dispatch list",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Project Management / Fabrication",
+      "frequency": "Daily",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_012",
+      "source": "project_management",
+      "target": "machining",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Shop dispatch to machining",
+      "dataTransmitted": "Released operation, priority, due date, material status",
+      "triggerEvent": "Job is ready for machining",
+      "automationRole": "Dispatch list",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Project Management / Machining",
+      "frequency": "Daily",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_013",
+      "source": "project_management",
+      "target": "welding",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Shop dispatch to welding",
+      "dataTransmitted": "Released operation, priority, due date, material status",
+      "triggerEvent": "Job is ready for welding",
+      "automationRole": "Dispatch list",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Project Management / Welding",
+      "frequency": "Daily",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_014",
+      "source": "engineering_production_planning",
+      "target": "laser_waterjet",
+      "systemName": "Shop Department Software",
+      "systemCategory": "Department Software",
+      "connectionType": "Cut-program release",
+      "dataTransmitted": "DXF, cut file, nest request, material/thickness, revision",
+      "triggerEvent": "Engineering releases cut operation",
+      "automationRole": "Program package transfer",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Engineering / Laser-Waterjet",
+      "frequency": "Per released job",
+      "lineColor": "#7C3AED",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_015",
+      "source": "engineering_production_planning",
+      "target": "bending",
+      "systemName": "Shop Department Software",
+      "systemCategory": "Department Software",
+      "connectionType": "Bend-program release",
+      "dataTransmitted": "Bend sequence, setup sheet, tooling requirements, drawing revision",
+      "triggerEvent": "Engineering releases bend operation",
+      "automationRole": "Program package transfer",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Engineering / Bending",
+      "frequency": "Per released job",
+      "lineColor": "#7C3AED",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_016",
+      "source": "engineering_production_planning",
+      "target": "machining",
+      "systemName": "Shop Department Software",
+      "systemCategory": "Department Software",
+      "connectionType": "CAM/programming release",
+      "dataTransmitted": "CAM package, setup sheet, tooling list, inspection features",
+      "triggerEvent": "Engineering releases machining operation",
+      "automationRole": "Program package transfer",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Engineering / Machining",
+      "frequency": "Per released job",
+      "lineColor": "#7C3AED",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_017",
+      "source": "engineering_production_planning",
+      "target": "welding",
+      "systemName": "Shop Department Software",
+      "systemCategory": "Department Software",
+      "connectionType": "Weld package release",
+      "dataTransmitted": "Drawings, fixture notes, WPS requirements, weld map",
+      "triggerEvent": "Engineering releases weld operation",
+      "automationRole": "Program/package transfer",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Engineering / Welding",
+      "frequency": "Per released job",
+      "lineColor": "#7C3AED",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_018",
+      "source": "laser_waterjet",
+      "target": "grinding_finishing",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Cut completion and status",
+      "dataTransmitted": "Cut quantity, scrap/remnant, completion status, first-piece result",
+      "triggerEvent": "Cut operation is completed",
+      "automationRole": "Operation completion update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Laser-Waterjet / Finishing",
+      "frequency": "Per operation",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_019",
+      "source": "bending",
+      "target": "grinding_finishing",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Bending completion and status",
+      "dataTransmitted": "Formed quantity, setup notes, dimensional result, completion status",
+      "triggerEvent": "Bend operation is completed",
+      "automationRole": "Operation completion update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Bending / Finishing",
+      "frequency": "Per operation",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_020",
+      "source": "machining",
+      "target": "grinding_finishing",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Machining completion and status",
+      "dataTransmitted": "Machined quantity, inspection status, setup/cycle notes, completion status",
+      "triggerEvent": "Machining operation is completed",
+      "automationRole": "Operation completion update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Machining / Finishing",
+      "frequency": "Per operation",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_021",
+      "source": "welding",
+      "target": "grinding_finishing",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Welding completion and status",
+      "dataTransmitted": "Welded assembly status, inspection status, rework/NCR flag",
+      "triggerEvent": "Weld operation is completed",
+      "automationRole": "Operation completion update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Welding / Finishing",
+      "frequency": "Per operation",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_022",
+      "source": "laser_waterjet",
+      "target": "engineering_production_planning",
+      "systemName": "Cut Schedule and Remnant Tracker",
+      "systemCategory": "Spreadsheet/Tracker",
+      "connectionType": "Material utilization feedback",
+      "dataTransmitted": "Remnant data, scrap percentage, nest notes, repeat-job improvement notes",
+      "triggerEvent": "Cut operation is completed",
+      "automationRole": "Tracker update for future planning",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Laser-Waterjet / Engineering",
+      "frequency": "Weekly / per job family",
+      "lineColor": "#EA580C",
+      "lineStyle": "dash",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_023",
+      "source": "bending",
+      "target": "engineering_production_planning",
+      "systemName": "Bend Setup and Tooling Notes Tracker",
+      "systemCategory": "Spreadsheet/Tracker",
+      "connectionType": "Bend setup feedback",
+      "dataTransmitted": "Tooling notes, setup corrections, bend sequence lessons learned",
+      "triggerEvent": "Bend operation is completed",
+      "automationRole": "Tracker update for repeat jobs",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Bending / Engineering",
+      "frequency": "Weekly / repeat jobs",
+      "lineColor": "#EA580C",
+      "lineStyle": "dash",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_024",
+      "source": "machining",
+      "target": "estimating_quoting",
+      "systemName": "Tooling and Cycle-Time Tracker",
+      "systemCategory": "Spreadsheet/Tracker",
+      "connectionType": "Actual cycle-time feedback",
+      "dataTransmitted": "Setup time, cycle time, tooling notes, variance to estimate",
+      "triggerEvent": "Machining operation is completed",
+      "automationRole": "Tracker update for estimating history",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Machining / Estimating",
+      "frequency": "Weekly / repeat jobs",
+      "lineColor": "#EA580C",
+      "lineStyle": "dash",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_025",
+      "source": "welding",
+      "target": "final_quality_assurance",
+      "systemName": "UniPoint QMS",
+      "systemCategory": "QMS / Compliance",
+      "connectionType": "Weld documentation to quality",
+      "dataTransmitted": "WPS/WPQ records, weld inspection notes, rework/NCR flags",
+      "triggerEvent": "Weld inspection or hold is recorded",
+      "automationRole": "Quality record update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Welding / Quality",
+      "frequency": "Per controlled weld",
+      "lineColor": "#DC2626",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_026",
+      "source": "grinding_finishing",
+      "target": "coatings",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Finish readiness for coating",
+      "dataTransmitted": "Finish completion, coating requirement, outside/internal route, due date",
+      "triggerEvent": "Finish operation is completed",
+      "automationRole": "Operation status update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Finishing / Coatings",
+      "frequency": "Per operation",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_027",
+      "source": "purchasing_supplier_management",
+      "target": "coatings",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Outside-process PO to coating",
+      "dataTransmitted": "Outside-process PO, supplier, coating specification, promised date",
+      "triggerEvent": "Coating is sent outside or scheduled",
+      "automationRole": "Outside process status",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Purchasing / Coatings",
+      "frequency": "Per outside process",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_028",
+      "source": "coatings",
+      "target": "final_quality_assurance",
+      "systemName": "UniPoint QMS",
+      "systemCategory": "QMS / Compliance",
+      "connectionType": "Coating cert to quality",
+      "dataTransmitted": "Coating certificate, inspection results, spec compliance, discrepancy flags",
+      "triggerEvent": "Coated parts return or coating is completed",
+      "automationRole": "Quality cert record update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Coatings / Quality",
+      "frequency": "Per coated batch",
+      "lineColor": "#DC2626",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_029",
+      "source": "coatings",
+      "target": "marking",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Coating completion to marking",
+      "dataTransmitted": "Coating completion, part status, serialization/marking readiness",
+      "triggerEvent": "Coating is accepted",
+      "automationRole": "Operation status update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Coatings / Marking",
+      "frequency": "Per operation",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_030",
+      "source": "engineering_production_planning",
+      "target": "marking",
+      "systemName": "Bartender label software and laser marking controller",
+      "systemCategory": "Department Software",
+      "connectionType": "Marking requirement release",
+      "dataTransmitted": "Label templates, serial format, drawing notes, artwork, placement requirement",
+      "triggerEvent": "Engineering releases marking requirements",
+      "automationRole": "Template/artwork transfer",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Engineering / Marking",
+      "frequency": "Per marked job",
+      "lineColor": "#7C3AED",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_031",
+      "source": "marking",
+      "target": "final_quality_assurance",
+      "systemName": "UniPoint QMS",
+      "systemCategory": "QMS / Compliance",
+      "connectionType": "Marking verification to quality",
+      "dataTransmitted": "Serial/label verification, artwork revision, exception status",
+      "triggerEvent": "Marking is completed",
+      "automationRole": "Quality record update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Marking / Quality",
+      "frequency": "Per marked batch",
+      "lineColor": "#DC2626",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_032",
+      "source": "marking",
+      "target": "assembly",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Marked parts to assembly",
+      "dataTransmitted": "Marked part status, serial data, kit readiness, traveler status",
+      "triggerEvent": "Marking is completed",
+      "automationRole": "Operation status update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Marking / Assembly",
+      "frequency": "Per operation",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_033",
+      "source": "engineering_production_planning",
+      "target": "assembly",
+      "systemName": "Digital Work Instructions / Kitting App",
+      "systemCategory": "Department Software",
+      "connectionType": "Assembly instruction release",
+      "dataTransmitted": "Work instructions, kit list, photos, torque/spec checks, drawings",
+      "triggerEvent": "Engineering releases assembly package",
+      "automationRole": "Guided work instruction sync",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Engineering / Assembly",
+      "frequency": "Per assembly job",
+      "lineColor": "#7C3AED",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_034",
+      "source": "assembly",
+      "target": "purchasing_supplier_management",
+      "systemName": "Assembly Shortage and Build Issue Tracker",
+      "systemCategory": "Spreadsheet/Tracker",
+      "connectionType": "Assembly shortage feedback",
+      "dataTransmitted": "Shortage item, missing hardware, build issue, required date, owner",
+      "triggerEvent": "Assembly identifies shortage or build issue",
+      "automationRole": "Tracker update and purchasing action",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Assembly / Purchasing",
+      "frequency": "As needed",
+      "lineColor": "#EA580C",
+      "lineStyle": "dash",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_035",
+      "source": "assembly",
+      "target": "testing",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Build completion to test",
+      "dataTransmitted": "Assembly completion, shortage closure, build record, test-ready status",
+      "triggerEvent": "Assembly operation is completed",
+      "automationRole": "Operation status update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Assembly / Test",
+      "frequency": "Per assembly",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_036",
+      "source": "testing",
+      "target": "final_quality_assurance",
+      "systemName": "LabVIEW/test bench software and calibration database",
+      "systemCategory": "Department Software",
+      "connectionType": "Test results to final quality",
+      "dataTransmitted": "Measurements, limits, pass/fail, equipment, calibration status, report",
+      "triggerEvent": "Test is run",
+      "automationRole": "Test data/report transfer",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Testing / Quality",
+      "frequency": "Per test",
+      "lineColor": "#7C3AED",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_037",
+      "source": "testing",
+      "target": "final_quality_assurance",
+      "systemName": "AI test-result anomaly and report generator",
+      "systemCategory": "AI/Automation",
+      "connectionType": "Test anomaly alert",
+      "dataTransmitted": "Outliers, pass/fail concerns, draft report narrative, retest suggestion",
+      "triggerEvent": "Test data is recorded",
+      "automationRole": "AI flags anomalies for quality review",
+      "lifecycleStatus": "Notional Proposed",
+      "owner": "Testing / Quality",
+      "frequency": "Per test",
+      "lineColor": "#047857",
+      "lineStyle": "dot",
+      "lineWidth": 3,
+      "animated": true,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_038",
+      "source": "final_quality_assurance",
+      "target": "shipping_customer_delivery",
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "connectionType": "Final release to shipping",
+      "dataTransmitted": "Release status, cert packet complete flag, shipment hold/release, invoice trigger",
+      "triggerEvent": "Final QA accepts product",
+      "automationRole": "Shipping release status",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Quality / Shipping",
+      "frequency": "Per shipment",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_039",
+      "source": "final_quality_assurance",
+      "target": "shipping_customer_delivery",
+      "systemName": "UniPoint QMS",
+      "systemCategory": "QMS / Compliance",
+      "connectionType": "Cert packet to shipping",
+      "dataTransmitted": "Final inspection approval, cert package, traveler signoff, documentation checklist",
+      "triggerEvent": "Final documentation is approved",
+      "automationRole": "Document packet release",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Quality / Shipping",
+      "frequency": "Per shipment",
+      "lineColor": "#DC2626",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_040",
+      "source": "shipping_customer_delivery",
+      "target": "sales_customer_opportunities",
+      "systemName": "HubSpot CRM and Microsoft Outlook",
+      "systemCategory": "Department Software",
+      "connectionType": "Delivery feedback loop",
+      "dataTransmitted": "Tracking number, delivery confirmation, customer notification, follow-up opportunity",
+      "triggerEvent": "Shipment is sent or delivered",
+      "automationRole": "Customer communication update",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Shipping / Sales",
+      "frequency": "Per shipment",
+      "lineColor": "#7C3AED",
+      "lineStyle": "dash",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_041",
+      "source": "project_management",
+      "target": "purchasing_supplier_management",
+      "systemName": "AI project risk summary and blocker digest",
+      "systemCategory": "AI/Automation",
+      "connectionType": "Material risk escalation",
+      "dataTransmitted": "Late material risk, shortage impact, supplier ETA, next best action",
+      "triggerEvent": "Project digest identifies supply risk",
+      "automationRole": "AI summary routes blocker to purchasing",
+      "lifecycleStatus": "Notional Proposed",
+      "owner": "Project Management / Purchasing",
+      "frequency": "Daily",
+      "lineColor": "#047857",
+      "lineStyle": "dot",
+      "lineWidth": 3,
+      "animated": true,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_042",
+      "source": "final_quality_assurance",
+      "target": "engineering_production_planning",
+      "systemName": "UniPoint QMS",
+      "systemCategory": "QMS / Compliance",
+      "connectionType": "NCR/CAR feedback to engineering",
+      "dataTransmitted": "NCR trend, recurring defect, drawing/process correction request",
+      "triggerEvent": "NCR or corrective action is opened",
+      "automationRole": "Quality feedback loop",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Quality / Engineering",
+      "frequency": "As needed",
+      "lineColor": "#DC2626",
+      "lineStyle": "solid",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_043",
+      "source": "estimating_quoting",
+      "target": "engineering_production_planning",
+      "systemName": "AI quote comparison and manufacturability screener",
+      "systemCategory": "AI/Automation",
+      "connectionType": "Quote risk to engineering planning",
+      "dataTransmitted": "Manufacturability flags, estimate assumptions, prior-job comparisons",
+      "triggerEvent": "Quote is prepared or awarded",
+      "automationRole": "AI summary reviewed by engineering",
+      "lifecycleStatus": "Notional Proposed",
+      "owner": "Estimating / Engineering",
+      "frequency": "Per complex quote",
+      "lineColor": "#047857",
+      "lineStyle": "dot",
+      "lineWidth": 3,
+      "animated": true,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    },
+    {
+      "id": "conn_044",
+      "source": "receiving_material_control",
+      "target": "purchasing_supplier_management",
+      "systemName": "Receiving Hold and Cert Review Log",
+      "systemCategory": "Spreadsheet/Tracker",
+      "connectionType": "Receiving discrepancy feedback",
+      "dataTransmitted": "Missing certs, damaged material, incorrect quantity, supplier follow-up needed",
+      "triggerEvent": "Receiving discrepancy is logged",
+      "automationRole": "Tracker update and supplier follow-up",
+      "lifecycleStatus": "Notional Current",
+      "owner": "Receiving / Purchasing",
+      "frequency": "As needed",
+      "lineColor": "#EA580C",
+      "lineStyle": "dash",
+      "lineWidth": 2,
+      "animated": false,
+      "notes": "Notional connection for React data-flow overlay; validate with process owners."
+    }
+  ],
+  "systemLegend": [
+    {
+      "systemName": "JobBoss2",
+      "systemCategory": "ERP/MRP System",
+      "lifecycleStatus": "Notional Current",
+      "systemOwner": "ERP Administrator / Operations",
+      "lineColor": "#2563EB",
+      "lineStyle": "solid",
+      "dataScope": "Customer, quote, sales order, job, BOM, routing, purchase order, inventory, operation status, shipping release",
+      "connectedFlowchartKeys": "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R",
+      "connectionCount": 19,
+      "notes": "Notional backbone system for quote-to-cash, shop dispatch, inventory, status, and shipment records."
+    },
+    {
+      "systemName": "Microsoft SharePoint / Teams / Outlook",
+      "systemCategory": "Department Software",
+      "lifecycleStatus": "Notional Current",
+      "systemOwner": "IT / Department Owners",
+      "lineColor": "#7C3AED",
+      "lineStyle": "dash",
+      "dataScope": "Documents, order package, customer/supplier communications, action items, project updates",
+      "connectedFlowchartKeys": "A, C, D, E, G, Q, R",
+      "connectionCount": 2,
+      "notes": "Notional collaboration/document layer used where work still travels through documents and messages."
+    },
+    {
+      "systemName": "UniPoint QMS",
+      "systemCategory": "QMS / Compliance",
+      "lifecycleStatus": "Notional Current",
+      "systemOwner": "Quality Manager",
+      "lineColor": "#DC2626",
+      "lineStyle": "solid",
+      "dataScope": "Inspection records, NCRs, corrective actions, certifications, release approvals",
+      "connectedFlowchartKeys": "F, K, M, N, P, Q, R",
+      "connectionCount": 5,
+      "notes": "Notional quality system connecting receiving, in-process/final quality, documentation, and shipping release."
+    },
+    {
+      "systemName": "Digital Work Instructions / Kitting App",
+      "systemCategory": "Department Software",
+      "lifecycleStatus": "Notional Current",
+      "systemOwner": "Assembly / Engineering",
+      "lineColor": "#7C3AED",
+      "lineStyle": "solid",
+      "dataScope": "Kits, work steps, photos, shortages, build status, operator checks",
+      "connectedFlowchartKeys": "D, G, O, P, Q",
+      "connectionCount": 1,
+      "notes": "Notional guided assembly layer connecting engineering release, kitting, assembly, test, and quality."
+    },
+    {
+      "systemName": "Shop Department Software",
+      "systemCategory": "Department Software",
+      "lifecycleStatus": "Notional Current",
+      "systemOwner": "Manufacturing Leads",
+      "lineColor": "#7C3AED",
+      "lineStyle": "solid",
+      "dataScope": "Cut files, nests, bend programs, CAM programs, WPS records, setup sheets, machine/controller data",
+      "connectedFlowchartKeys": "D, H, I, J, K, L",
+      "connectionCount": 4,
+      "notes": "Composite notional row for department tools that receive engineering/programming packages and return status/lessons learned."
+    },
+    {
+      "systemName": "Operational Trackers",
+      "systemCategory": "Spreadsheet/Tracker",
+      "lifecycleStatus": "Notional Current",
+      "systemOwner": "Process Owners",
+      "lineColor": "#EA580C",
+      "lineStyle": "dash",
+      "dataScope": "Shortages, milestones, expediting, setup notes, outside process status, issues, documentation checklists",
+      "connectedFlowchartKeys": "B, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R",
+      "connectionCount": 5,
+      "notes": "Notional tracker layer for things that may still be maintained in Excel or lightweight lists."
+    },
+    {
+      "systemName": "AI Automation Layer",
+      "systemCategory": "AI/Automation",
+      "lifecycleStatus": "Notional Proposed",
+      "systemOwner": "IT / Process Owners",
+      "lineColor": "#047857",
+      "lineStyle": "dot",
+      "dataScope": "RFQ summaries, quote checks, PO mismatch checks, drawing/BOM checks, cert OCR, risk summaries, anomaly detection",
+      "connectedFlowchartKeys": "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R",
+      "connectionCount": 5,
+      "notes": "Notional AI layer; every AI connection should remain human-reviewed in production."
+    }
   ]
 }

@@ -69,9 +69,62 @@ export interface RoadmapEdge {
   notes?: string
 }
 
+/** Per the System Connections / Shared Systems sheets' system_category column. */
+export type SystemCategory =
+  | 'ERP/MRP System'
+  | 'Department Software'
+  | 'Spreadsheet/Tracker'
+  | 'QMS / Compliance'
+  | 'AI/Automation'
+  | string
+
+/**
+ * One software/data connection between two process nodes — an overlay on top
+ * of the basic shop-flow edges, per the System Connections sheet. Unlike
+ * RoadmapEdge (process handoff), these can jump between non-adjacent nodes
+ * and different lanes to show real cross-branch system integration.
+ */
+export interface SystemConnection {
+  id: string
+  source: string
+  target: string
+  systemName: string
+  systemCategory: SystemCategory
+  connectionType: string
+  dataTransmitted: string
+  triggerEvent: string
+  automationRole: string
+  lifecycleStatus: string
+  owner: string
+  frequency: string
+  lineColor: string
+  lineStyle: string
+  lineWidth: number
+  animated: boolean
+  notes?: string
+}
+
+/** A reusable system, per the Shared Systems sheet — used as the overlay legend. */
+export interface SharedSystem {
+  systemName: string
+  systemCategory: SystemCategory
+  lifecycleStatus: string
+  systemOwner: string
+  lineColor: string
+  lineStyle: string
+  dataScope: string
+  connectedFlowchartKeys: string
+  connectionCount: number
+  notes?: string
+}
+
 export interface RoadmapData {
   nodes: RoadmapNode[]
   edges: RoadmapEdge[]
   /** Lane display order, e.g. for filter chips. */
   lanes: string[]
+  /** Software/data overlay connections, per the System Connections sheet. */
+  systemConnections: SystemConnection[]
+  /** Reusable system legend, per the Shared Systems sheet. */
+  systemLegend: SharedSystem[]
 }

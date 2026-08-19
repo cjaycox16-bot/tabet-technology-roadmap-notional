@@ -36,6 +36,8 @@ function DrawerContent({ data, id }: { data: RoadmapData; id: string }) {
   if (!node) return null
   const role = ROLE_STYLE[node.role]
   const status = STATUS_STYLE[node.status]
+  const outgoing = data.systemConnections.filter((c) => c.source === id)
+  const incoming = data.systemConnections.filter((c) => c.target === id)
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -99,7 +101,53 @@ function DrawerContent({ data, id }: { data: RoadmapData; id: string }) {
             })}
           </ul>
         </div>
+
+        {(outgoing.length > 0 || incoming.length > 0) && (
+          <div className="mt-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-[#94A3B8]">
+              Connected systems ({outgoing.length + incoming.length})
+            </h3>
+            <ul className="mt-2 space-y-2">
+              {outgoing.map((c) => (
+                <SystemConnectionRow key={c.id} data={data} connection={c} direction="out" />
+              ))}
+              {incoming.map((c) => (
+                <SystemConnectionRow key={c.id} data={data} connection={c} direction="in" />
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
+  )
+}
+
+function SystemConnectionRow({
+  data,
+  connection,
+  direction,
+}: {
+  data: RoadmapData
+  connection: RoadmapData['systemConnections'][number]
+  direction: 'in' | 'out'
+}) {
+  const counterpart = findNode(data, direction === 'out' ? connection.target : connection.source)
+  return (
+    <li className="rounded-md border border-[#E8EFF6] px-2.5 py-2 text-sm">
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-1.5 font-medium text-[#0B1523]">
+          <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: connection.lineColor }} />
+          {connection.systemName}
+        </span>
+        <Badge variant="secondary" className="shrink-0 rounded px-1.5 py-0 text-[9px] text-[#3D5168]">
+          {connection.systemCategory}
+        </Badge>
+      </div>
+      <p className="mt-0.5 text-xs text-[#3D5168]">
+        {direction === 'out' ? 'Sends to' : 'Receives from'}{' '}
+        <span className="font-medium">{counterpart?.label ?? connection.target}</span>
+      </p>
+      <p className="mt-0.5 text-xs text-[#6B82A0]">{connection.dataTransmitted}</p>
+    </li>
   )
 }

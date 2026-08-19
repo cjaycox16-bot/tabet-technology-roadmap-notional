@@ -51,13 +51,13 @@ export function FlowCanvas({
   data: RoadmapData
   handleRef?: React.RefObject<FlowCanvasHandle | null>
 }) {
-  const { expandedNodeIds, filters } = useRoadmap()
+  const { expandedNodeIds, filters, showSystemsOverlay } = useRoadmap()
   const { fitView } = useReactFlow()
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState<FlowNode>([])
   const [edges, setEdges, onEdgesChangeInternal] = useEdgesState<Edge>([])
 
   const applyBaseLayout = useCallback(() => {
-    const base = computeBaseLayout(data, expandedNodeIds, filters)
+    const base = computeBaseLayout(data, expandedNodeIds, filters, showSystemsOverlay)
     const stored = loadLayout()
     const visibleIds = new Set(base.nodes.map((n) => n.id))
 
@@ -71,7 +71,7 @@ export function FlowCanvas({
 
     setNodes(mergedNodes)
     setEdges([...base.edges, ...customEdges])
-  }, [data, expandedNodeIds, filters, setNodes, setEdges])
+  }, [data, expandedNodeIds, filters, showSystemsOverlay, setNodes, setEdges])
 
   useEffect(() => {
     applyBaseLayout()

@@ -1,6 +1,7 @@
 import { useRoadmap } from '../context/RoadmapContext'
 import { STATUS_STYLE } from './nodes/roleStyles'
 import { hasActiveFilters } from '../layout/filters'
+import { buildSystemCategoryStyles } from '../layout/systemStyle'
 import type { RoadmapData } from '../data/types'
 
 function Chip({
@@ -31,9 +32,21 @@ function Chip({
 }
 
 export function Toolbar({ data }: { data: RoadmapData }) {
-  const { filters, toggleLane, toggleStatus, setSearch, clearFilters, expandAll, collapseAll, expandedNodeIds } =
-    useRoadmap()
+  const {
+    filters,
+    toggleLane,
+    toggleStatus,
+    toggleSystemCategory,
+    setSearch,
+    clearFilters,
+    expandAll,
+    collapseAll,
+    expandedNodeIds,
+    showSystemsOverlay,
+    toggleSystemsOverlay,
+  } = useRoadmap()
   const statuses = Array.from(new Set(data.nodes.map((n) => n.status)))
+  const systemCategoryStyles = buildSystemCategoryStyles(data.systemConnections)
   const allExpanded = expandedNodeIds.size === data.nodes.length
 
   return (
@@ -42,8 +55,8 @@ export function Toolbar({ data }: { data: RoadmapData }) {
         type="text"
         value={filters.search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search stages, software..."
-        className="w-48 rounded-full border border-[#D0DCE8] bg-white px-3 py-1 text-[12px] text-[#0B1523] placeholder:text-[#94A3B8] focus:border-[#17499F] focus:outline-none"
+        placeholder="Search stages, software, systems..."
+        className="w-52 rounded-full border border-[#D0DCE8] bg-white px-3 py-1 text-[12px] text-[#0B1523] placeholder:text-[#94A3B8] focus:border-[#17499F] focus:outline-none"
       />
 
       <div className="mx-1 h-4 w-px bg-[#D0DCE8]" />
@@ -70,6 +83,36 @@ export function Toolbar({ data }: { data: RoadmapData }) {
           </Chip>
         ))}
       </div>
+
+      <div className="mx-1 h-4 w-px bg-[#D0DCE8]" />
+
+      <button
+        type="button"
+        onClick={toggleSystemsOverlay}
+        className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${
+          showSystemsOverlay
+            ? 'border-[#047857] bg-[#047857] text-white'
+            : 'border-[#D0DCE8] bg-white text-[#3D5168] hover:border-[#B8CCE0] hover:bg-[#F0F5FA]'
+        }`}
+        title="Toggle the software/data connector overlay"
+      >
+        Systems &amp; data flow
+      </button>
+
+      {showSystemsOverlay && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          {systemCategoryStyles.map(({ category, stroke }) => (
+            <Chip
+              key={category}
+              active={filters.systemCategories.has(category)}
+              onClick={() => toggleSystemCategory(category)}
+              dotColor={stroke}
+            >
+              {category}
+            </Chip>
+          ))}
+        </div>
+      )}
 
       {hasActiveFilters(filters) && (
         <button

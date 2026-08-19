@@ -26,7 +26,8 @@ function App() {
           </div>
           <div className="flex items-center gap-2">
             <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-[#C8890A]">
-              {roadmapData.nodes.length} stages · software slots pending real names
+              {roadmapData.nodes.length} stages · {roadmapData.systemConnections.length} system connections ·
+              notional data, pending validation
             </span>
             <button
               type="button"
@@ -43,7 +44,7 @@ function App() {
           <ReactFlowProvider>
             <FlowCanvas data={roadmapData} handleRef={flowCanvasRef} />
           </ReactFlowProvider>
-          <Legend />
+          <Legend data={roadmapData} />
           <DetailDrawer data={roadmapData} />
         </div>
       </div>

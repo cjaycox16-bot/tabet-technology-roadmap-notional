@@ -11,8 +11,11 @@ interface RoadmapContextValue {
   filters: FilterState
   toggleLane: (lane: string) => void
   toggleStatus: (status: string) => void
+  toggleSystemCategory: (category: string) => void
   setSearch: (search: string) => void
   clearFilters: () => void
+  showSystemsOverlay: boolean
+  toggleSystemsOverlay: () => void
 }
 
 const RoadmapContext = createContext<RoadmapContextValue | null>(null)
@@ -22,7 +25,9 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [lanes, setLanes] = useState<Set<string>>(new Set())
   const [statuses, setStatuses] = useState<Set<string>>(new Set())
+  const [systemCategories, setSystemCategories] = useState<Set<string>>(new Set())
   const [search, setSearchState] = useState('')
+  const [showSystemsOverlay, setShowSystemsOverlay] = useState(true)
 
   const value = useMemo<RoadmapContextValue>(
     () => ({
@@ -39,7 +44,7 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
       collapseAll: () => setExpandedNodeIds(new Set()),
       selectedNodeId,
       selectNode: setSelectedNodeId,
-      filters: { lanes, statuses, search },
+      filters: { lanes, statuses, systemCategories, search },
       toggleLane: (lane: string) => {
         setLanes((prev) => {
           const next = new Set(prev)
@@ -56,14 +61,25 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
           return next
         })
       },
+      toggleSystemCategory: (category: string) => {
+        setSystemCategories((prev) => {
+          const next = new Set(prev)
+          if (next.has(category)) next.delete(category)
+          else next.add(category)
+          return next
+        })
+      },
       setSearch: setSearchState,
       clearFilters: () => {
         setLanes(new Set())
         setStatuses(new Set())
+        setSystemCategories(new Set())
         setSearchState('')
       },
+      showSystemsOverlay,
+      toggleSystemsOverlay: () => setShowSystemsOverlay((prev) => !prev),
     }),
-    [expandedNodeIds, selectedNodeId, lanes, statuses, search],
+    [expandedNodeIds, selectedNodeId, lanes, statuses, systemCategories, search, showSystemsOverlay],
   )
 
   return <RoadmapContext.Provider value={value}>{children}</RoadmapContext.Provider>
