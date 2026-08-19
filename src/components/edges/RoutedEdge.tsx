@@ -24,9 +24,14 @@ function flowingPath(points: RoutePoint[]): string {
   const reach = Math.min(CURVE_REACH, laneLength / 2)
   const laneDir = Math.sign(p2.y - p1.y) || 1
 
+  // c1's job is to make the curve ARRIVE at p1 already heading toward p2 (so
+  // the following straight lane segment continues smoothly, no kink) — that
+  // means placing it on the p0 side of p1, not the p2 side. c2 mirrors this
+  // leaving p2. (An earlier version had both signs flipped, which produced
+  // a small backward hook right at each bend instead of a smooth turn.)
   const c0 = { x: p0.x + (p1.x - p0.x) * STUB_BEND, y: p0.y }
-  const c1 = { x: p1.x, y: p1.y + laneDir * reach }
-  const c2 = { x: p2.x, y: p2.y - laneDir * reach }
+  const c1 = { x: p1.x, y: p1.y - laneDir * reach }
+  const c2 = { x: p2.x, y: p2.y + laneDir * reach }
   const c3 = { x: p3.x + (p2.x - p3.x) * STUB_BEND, y: p3.y }
 
   return [

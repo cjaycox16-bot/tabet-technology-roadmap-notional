@@ -18,12 +18,22 @@ export interface NodeBox {
  * pass — call this with the CURRENT node positions (including drag
  * overrides) so the bus routes track a dragged node instead of freezing at
  * wherever it was when the page first loaded.
+ *
+ * Connections between nodes that are already adjacent in the process flow
+ * (i.e. the same source/target pair as an existing process-flow edge) are
+ * skipped on the canvas — that handoff is already drawn as the plain
+ * process arrow directly below/above, so a second colored line tracing the
+ * exact same path is pure redundancy. They're still listed in full in the
+ * per-node detail panel; this only trims what's drawn on the canvas.
  */
 export function buildSystemFlowEdges(data: RoadmapData, filters: FilterState, boxes: NodeBox[]): Edge[] {
+  const processPairs = new Set(data.edges.map((e) => `${e.source}->${e.target}`))
+  const canvasConnections = data.systemConnections.filter((sc) => !processPairs.has(`${sc.source}->${sc.target}`))
+
   const matches = new Map(data.nodes.map((n) => [n.id, nodeMatchesFilters(n, filters)]))
   const routes = routeSystemEdges(
     boxes,
-    data.systemConnections.map((sc) => ({
+    canvasConnections.map((sc) => ({
       id: sc.id,
       source: sc.source,
       target: sc.target,
@@ -31,7 +41,7 @@ export function buildSystemFlowEdges(data: RoadmapData, filters: FilterState, bo
     })),
   )
 
-  return data.systemConnections.map((sc) => {
+  return canvasConnections.map((sc) => {
     const filterDimmed =
       !matches.get(sc.source) || !matches.get(sc.target) || !systemConnectionMatchesFilters(sc, filters)
 
