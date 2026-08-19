@@ -34,6 +34,16 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
   const [search, setSearchState] = useState('')
   const [showSystemsOverlay, setShowSystemsOverlay] = useState(true)
 
+  // Stable reference unless an actual filter selection changes. This must NOT
+  // be rebuilt on every hover — FlowCanvas treats a new `filters` object as
+  // "the filters changed, re-run the full layout," so bundling this with
+  // hover/selection state caused every mouse-enter to trigger a full ELK
+  // re-layout and viewport reset.
+  const filters = useMemo<FilterState>(
+    () => ({ lanes, statuses, systemCategories, search }),
+    [lanes, statuses, systemCategories, search],
+  )
+
   const value = useMemo<RoadmapContextValue>(
     () => ({
       expandedNodeIds,
@@ -52,7 +62,7 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
       hoveredNodeId,
       setHoveredNode: setHoveredNodeId,
       focusNodeId: hoveredNodeId ?? selectedNodeId,
-      filters: { lanes, statuses, systemCategories, search },
+      filters,
       toggleLane: (lane: string) => {
         setLanes((prev) => {
           const next = new Set(prev)
@@ -87,7 +97,7 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
       showSystemsOverlay,
       toggleSystemsOverlay: () => setShowSystemsOverlay((prev) => !prev),
     }),
-    [expandedNodeIds, selectedNodeId, hoveredNodeId, lanes, statuses, systemCategories, search, showSystemsOverlay],
+    [expandedNodeIds, selectedNodeId, hoveredNodeId, filters, showSystemsOverlay],
   )
 
   return <RoadmapContext.Provider value={value}>{children}</RoadmapContext.Provider>

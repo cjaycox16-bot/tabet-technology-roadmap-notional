@@ -2,25 +2,21 @@ import { MarkerType, type Edge } from '@xyflow/react'
 import type { RoadmapData } from '../data/types'
 import type { FlowNode } from './buildGraph'
 import { layoutGraph } from './elkLayout'
-import { routeSystemEdges } from './routeSystemEdges'
 import { DEFAULT_HANDOFF_STYLE, HANDOFF_STYLE } from '../components/nodes/roleStyles'
-import { nodeMatchesFilters, systemConnectionMatchesFilters, type FilterState } from './filters'
-import { dasharrayForLineStyle } from './systemStyle'
+import { nodeMatchesFilters, type FilterState } from './filters'
 
 /**
- * The data-driven layout: node positions from ELK for every node in
- * roadmapData.ts, tagged with expand/filter state, plus the software/data
- * overlay routed separately as a bus (see routeSystemEdges.ts). Pure
- * function of (data, expanded ids, filters, overlay flag) — user
- * drag/connect edits are merged in by the caller from localStorage. Async
- * because ELK's layout pass runs off the main thread.
+ * Node positions (from ELK, driven by the process-flow edges only) and the
+ * process-flow edges themselves, tagged with expand/filter state. Pure
+ * function of (data, expanded ids, filters). Async because ELK's layout
+ * pass runs off the main thread.
+ *
+ * The software/data overlay is intentionally NOT built here — see
+ * systemFlowEdges.ts, which FlowCanvas recomputes live from current node
+ * positions (including drag overrides) so the overlay tracks a dragged node
+ * instead of freezing at these initial-layout coordinates.
  */
-export async function computeBaseLayout(
-  data: RoadmapData,
-  expandedNodeIds: Set<string>,
-  filters: FilterState,
-  showSystemsOverlay: boolean,
-) {
+export async function computeBaseLayout(data: RoadmapData, expandedNodeIds: Set<string>, filters: FilterState) {
   const matches = new Map(data.nodes.map((n) => [n.id, nodeMatchesFilters(n, filters)]))
 
   const rawNodes: FlowNode[] = data.nodes.map((node) => ({
@@ -63,64 +59,7 @@ export async function computeBaseLayout(
     }
   })
 
-  const systemEdges: Edge[] = showSystemsOverlay
-    ? buildSystemEdges(data, filters, matches, positionedNodes)
-    : []
-
-  return { nodes: positionedNodes, edges: [...styledEdges, ...systemEdges] }
-}
-
-/**
- * Software/data overlay edges, per the System Connections sheet. These can
- * jump between non-adjacent nodes in different lanes (real cross-branch
- * system integration), unlike the base process-flow edges above. Routed as
- * a wiring-loom bus (see routeSystemEdges.ts) rather than a direct line, so
- * the ~44 connections stay legible instead of tangling through the middle
- * of the diagram.
- */
-function buildSystemEdges(
-  data: RoadmapData,
-  filters: FilterState,
-  matches: Map<string, boolean>,
-  positionedNodes: FlowNode[],
-): Edge[] {
-  const boxes = positionedNodes.map((n) => ({
-    id: n.id,
-    x: n.position.x,
-    y: n.position.y,
-    width: typeof n.style?.width === 'number' ? n.style.width : 300,
-    height: typeof n.style?.height === 'number' ? n.style.height : 112,
-  }))
-  const routes = routeSystemEdges(
-    boxes,
-    data.systemConnections.map((sc) => ({
-      id: sc.id,
-      source: sc.source,
-      target: sc.target,
-      category: sc.systemCategory,
-    })),
-  )
-
-  return data.systemConnections.map((sc) => {
-    const filterDimmed =
-      !matches.get(sc.source) || !matches.get(sc.target) || !systemConnectionMatchesFilters(sc, filters)
-
-    return {
-      id: sc.id,
-      source: sc.source,
-      target: sc.target,
-      type: 'systemRoute',
-      deletable: false,
-      selectable: false,
-      animated: sc.animated,
-      // Opacity/weight are computed live in RoutedEdge from hover/selection
-      // state, not baked in here — that's what lets hovering a stage
-      // highlight just its own connections without re-running the layout.
-      data: { points: routes.get(sc.id) ?? [], dasharray: dasharrayForLineStyle(sc.lineStyle), filterDimmed },
-      style: { stroke: sc.lineColor, strokeWidth: sc.lineWidth },
-      markerEnd: { type: MarkerType.ArrowClosed, color: sc.lineColor, width: 14, height: 14 },
-    }
-  })
+  return { nodes: positionedNodes, edges: styledEdges }
 }
 
 export { HANDOFF_STYLE, DEFAULT_HANDOFF_STYLE }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useImperativeHandle, useRef } from 'react'
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
 import {
   addEdge,
   Background,
@@ -16,6 +16,7 @@ import {
 } from '@xyflow/react'
 import type { RoadmapData } from '../data/types'
 import { computeBaseLayout } from '../layout/computeBaseLayout'
+import { buildSystemFlowEdges } from '../layout/systemFlowEdges'
 import type { FlowNode } from '../layout/buildGraph'
 import { loadLayout, saveLayout, clearLayout, type StoredCustomEdge } from '../persistence/layoutStorage'
 import { useRoadmap } from '../context/RoadmapContext'
@@ -68,7 +69,7 @@ export function FlowCanvas({
 
   const applyBaseLayout = useCallback(() => {
     const requestId = ++layoutRequestId.current
-    computeBaseLayout(data, expandedNodeIds, filters, showSystemsOverlay).then((base) => {
+    computeBaseLayout(data, expandedNodeIds, filters).then((base) => {
       if (requestId !== layoutRequestId.current) return
 
       const stored = loadLayout()
@@ -86,11 +87,31 @@ export function FlowCanvas({
       setEdges([...base.edges, ...customEdges])
       requestAnimationFrame(() => fitView({ padding: 0.2, duration: 300 }))
     })
-  }, [data, expandedNodeIds, filters, showSystemsOverlay, setNodes, setEdges, fitView])
+  }, [data, expandedNodeIds, filters, setNodes, setEdges, fitView])
 
   useEffect(() => {
     applyBaseLayout()
   }, [applyBaseLayout])
+
+  // Recomputed from whatever the CURRENT node positions are (including drag
+  // overrides), not from the layout pass above — that's what makes the
+  // overlay follow a dragged node instead of freezing at its original spot.
+  // Kept out of the `edges` state entirely: these are derived and read-only
+  // (deletable: false, selectable: false), not something React Flow needs
+  // to track independently.
+  const systemEdges = useMemo(() => {
+    if (!showSystemsOverlay || nodes.length === 0) return []
+    const boxes = nodes.map((n) => ({
+      id: n.id,
+      x: n.position.x,
+      y: n.position.y,
+      width: typeof n.style?.width === 'number' ? n.style.width : 300,
+      height: typeof n.style?.height === 'number' ? n.style.height : 112,
+    }))
+    return buildSystemFlowEdges(data, filters, boxes)
+  }, [data, filters, showSystemsOverlay, nodes])
+
+  const renderedEdges = useMemo(() => [...edges, ...systemEdges], [edges, systemEdges])
 
   useImperativeHandle(handleRef, () => ({
     resetLayout: () => {
@@ -145,7 +166,7 @@ export function FlowCanvas({
   return (
     <ReactFlow
       nodes={nodes}
-      edges={edges}
+      edges={renderedEdges}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       onNodesChange={handleNodesChange}
