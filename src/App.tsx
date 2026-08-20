@@ -1,17 +1,20 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { ReactFlowProvider } from '@xyflow/react'
 import { RoadmapProvider, useRoadmap } from './context/RoadmapContext'
 import { FlowCanvas, type FlowCanvasHandle } from './components/FlowCanvas'
 import { DetailDrawer } from './components/DetailDrawer'
 import { Legend } from './components/Legend'
 import { Toolbar } from './components/Toolbar'
-import { ValidationDashboard } from './components/ValidationDashboard'
+import { DashboardPage } from './components/DashboardPage'
 import { AiAssistant } from './components/AiAssistant'
 import { roadmapData } from './data/roadmapData'
+
+type View = 'flow' | 'dashboard'
 
 function AppShell() {
   const flowCanvasRef = useRef<FlowCanvasHandle>(null)
   const { connectMode, toggleConnectMode, annotations } = useRoadmap()
+  const [view, setView] = useState<View>('flow')
   const validatedCount = roadmapData.nodes.filter((n) => annotations.nodes[n.id]?.validated).length
 
   return (
@@ -33,49 +36,70 @@ function AppShell() {
             {validatedCount}/{roadmapData.nodes.length} validated
           </span>
 
-          <ValidationDashboard data={roadmapData} />
-
-          <div className="flex items-center rounded-full border border-white/25 p-0.5 text-xs font-medium">
-            <button
-              type="button"
-              onClick={() => connectMode && toggleConnectMode()}
-              className={`rounded-full px-2.5 py-1 transition-colors ${
-                connectMode ? 'text-white/70 hover:bg-white/10' : 'bg-white text-[#09295F]'
-              }`}
-              title="Drag a stage anywhere on its card to reposition it"
-            >
-              Move stages
-            </button>
-            <button
-              type="button"
-              onClick={() => !connectMode && toggleConnectMode()}
-              className={`rounded-full px-2.5 py-1 transition-colors ${
-                connectMode ? 'bg-white text-[#09295F]' : 'text-white/70 hover:bg-white/10'
-              }`}
-              title="Reveals a drag point on every side and corner of each stage — drag between two to draw a connector"
-            >
-              Draw connectors
-            </button>
-          </div>
-
           <button
             type="button"
-            onClick={() => flowCanvasRef.current?.resetLayout()}
-            className="rounded-full border border-white/25 px-2.5 py-1 text-xs font-medium text-white/80 hover:bg-white/10"
-            title="Discard any boxes you've dragged or connectors you've drawn, and restore the default layout"
+            onClick={() => setView(view === 'dashboard' ? 'flow' : 'dashboard')}
+            className={`rounded-full border border-white/25 px-2.5 py-1 text-xs font-medium transition-colors ${
+              view === 'dashboard' ? 'bg-white text-[#09295F]' : 'text-white/80 hover:bg-white/10'
+            }`}
+            title="Every stage as a card, grouped by process, with validation status and key metrics"
           >
-            Reset layout
+            {view === 'dashboard' ? '← Back to flow' : 'Dashboard'}
           </button>
+
+          {view === 'flow' && (
+            <>
+              <div className="flex items-center rounded-full border border-white/25 p-0.5 text-xs font-medium">
+                <button
+                  type="button"
+                  onClick={() => connectMode && toggleConnectMode()}
+                  className={`rounded-full px-2.5 py-1 transition-colors ${
+                    connectMode ? 'text-white/70 hover:bg-white/10' : 'bg-white text-[#09295F]'
+                  }`}
+                  title="Drag a stage anywhere on its card to reposition it"
+                >
+                  Move stages
+                </button>
+                <button
+                  type="button"
+                  onClick={() => !connectMode && toggleConnectMode()}
+                  className={`rounded-full px-2.5 py-1 transition-colors ${
+                    connectMode ? 'bg-white text-[#09295F]' : 'text-white/70 hover:bg-white/10'
+                  }`}
+                  title="Reveals a drag point on every side and corner of each stage — drag between two to draw a connector"
+                >
+                  Draw connectors
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => flowCanvasRef.current?.resetLayout()}
+                className="rounded-full border border-white/25 px-2.5 py-1 text-xs font-medium text-white/80 hover:bg-white/10"
+                title="Discard any boxes you've dragged or connectors you've drawn, and restore the default layout"
+              >
+                Reset layout
+              </button>
+            </>
+          )}
         </div>
       </header>
-      <Toolbar data={roadmapData} />
-      <div className="relative flex-1">
-        <ReactFlowProvider>
-          <FlowCanvas data={roadmapData} handleRef={flowCanvasRef} />
-        </ReactFlowProvider>
-        <Legend data={roadmapData} />
-        <DetailDrawer data={roadmapData} />
-      </div>
+
+      {view === 'dashboard' ? (
+        <DashboardPage data={roadmapData} />
+      ) : (
+        <>
+          <Toolbar data={roadmapData} />
+          <div className="relative flex-1">
+            <ReactFlowProvider>
+              <FlowCanvas data={roadmapData} handleRef={flowCanvasRef} />
+            </ReactFlowProvider>
+            <Legend data={roadmapData} />
+            <DetailDrawer data={roadmapData} />
+          </div>
+        </>
+      )}
+
       <AiAssistant data={roadmapData} />
     </div>
   )
