@@ -58,7 +58,7 @@ export interface FlowCanvasHandle {
 
 /** The two kinds of state change Ctrl+Z can revert — everything persisted to layoutStorage. */
 type UndoAction =
-  | { kind: 'move'; nodeId: string; from: XYPosition }
+  | { kind: 'move'; moves: { nodeId: string; from: XYPosition }[] }
   | { kind: 'addEdge'; edge: StoredCustomEdge }
   | { kind: 'removeEdge'; edge: StoredCustomEdge }
 
@@ -162,18 +162,25 @@ export function FlowCanvas({
   const handleNodesChange = useCallback(
     (changes: NodeChange<FlowNode>[]) => {
       onNodesChangeInternal(changes)
+      const moves: { nodeId: string; from: XYPosition }[] = []
+      let stored: ReturnType<typeof loadLayout> | null = null
       for (const change of changes) {
         if (change.type === 'position' && change.dragging === false && change.position) {
+          stored ??= loadLayout()
           const from = dragStartPositions.current.get(change.id)
           dragStartPositions.current.delete(change.id)
           if (from && (from.x !== change.position.x || from.y !== change.position.y)) {
-            pushUndo({ kind: 'move', nodeId: change.id, from })
+            moves.push({ nodeId: change.id, from })
           }
-          const stored = loadLayout()
           stored.positions[change.id] = change.position
-          saveLayout(stored)
         }
       }
+      if (!stored) return
+      saveLayout(stored)
+      // One undo action for the whole group — a multi-select drag (Ctrl+click
+      // several stages, then drag any one) moves every selected stage at
+      // once, so a single Ctrl+Z should put all of them back, not just one.
+      if (moves.length > 0) pushUndo({ kind: 'move', moves })
     },
     [onNodesChangeInternal, pushUndo],
   )
@@ -214,9 +221,10 @@ export function FlowCanvas({
     const action = undoStack.current.pop()
     if (!action) return
     if (action.kind === 'move') {
-      setNodes((nds) => nds.map((n) => (n.id === action.nodeId ? { ...n, position: action.from } : n)))
+      const fromById = new Map(action.moves.map((m) => [m.nodeId, m.from]))
+      setNodes((nds) => nds.map((n) => (fromById.has(n.id) ? { ...n, position: fromById.get(n.id)! } : n)))
       const stored = loadLayout()
-      stored.positions[action.nodeId] = action.from
+      for (const m of action.moves) stored.positions[m.nodeId] = m.from
       saveLayout(stored)
     } else if (action.kind === 'addEdge') {
       setEdges((eds) => eds.filter((e) => e.id !== action.edge.id))
@@ -254,7 +262,11 @@ export function FlowCanvas({
       onNodesChange={handleNodesChange}
       onEdgesChange={handleEdgesChange}
       onConnect={handleConnect}
-      onNodeDragStart={(_event, node) => dragStartPositions.current.set(node.id, node.position)}
+      onNodeDragStart={(_event, _node, draggedNodes) => {
+        // Third param is every node moving in this drag, not just the one
+        // the gesture started on — a Ctrl-selected group included.
+        for (const n of draggedNodes) dragStartPositions.current.set(n.id, n.position)
+      }}
       deleteKeyCode={['Backspace', 'Delete']}
       fitView
       fitViewOptions={{ padding: 0.2 }}

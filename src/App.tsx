@@ -5,11 +5,14 @@ import { FlowCanvas, type FlowCanvasHandle } from './components/FlowCanvas'
 import { DetailDrawer } from './components/DetailDrawer'
 import { Legend } from './components/Legend'
 import { Toolbar } from './components/Toolbar'
+import { ValidationDashboard } from './components/ValidationDashboard'
+import { AiAssistant } from './components/AiAssistant'
 import { roadmapData } from './data/roadmapData'
 
 function AppShell() {
   const flowCanvasRef = useRef<FlowCanvasHandle>(null)
-  const { connectMode, toggleConnectMode } = useRoadmap()
+  const { connectMode, toggleConnectMode, annotations } = useRoadmap()
+  const validatedCount = roadmapData.nodes.filter((n) => annotations.nodes[n.id]?.validated).length
 
   return (
     <div className="flex h-screen w-screen flex-col bg-[#F0F5FA]">
@@ -26,9 +29,11 @@ function AppShell() {
         </div>
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-[#C8890A]">
-            {roadmapData.nodes.length} stages · {roadmapData.systemConnections.length} system connections ·
-            notional data, pending validation
+            {roadmapData.nodes.length} stages · {roadmapData.systemConnections.length} system connections ·{' '}
+            {validatedCount}/{roadmapData.nodes.length} validated
           </span>
+
+          <ValidationDashboard data={roadmapData} />
 
           <div className="flex items-center rounded-full border border-white/25 p-0.5 text-xs font-medium">
             <button
@@ -71,6 +76,7 @@ function AppShell() {
         <Legend data={roadmapData} />
         <DetailDrawer data={roadmapData} />
       </div>
+      <AiAssistant data={roadmapData} />
     </div>
   )
 }

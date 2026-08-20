@@ -37,11 +37,12 @@ const HANDLE_POINTS: { id: string; position: Position; alwaysOn?: boolean; style
   { id: 'left', position: Position.Left },
 ]
 
-export function PipelineNode({ data }: PipelineNodeProps) {
-  const { selectNode, toggleNodeExpanded, setHoveredNode, connectMode } = useRoadmap()
+export function PipelineNode({ data, selected }: PipelineNodeProps) {
+  const { selectNode, toggleNodeExpanded, setHoveredNode, connectMode, getAnnotation } = useRoadmap()
   const { node, expanded, dimmed } = data
   const role = ROLE_STYLE[node.role]
   const status = STATUS_STYLE[node.status]
+  const validated = getAnnotation(node.id).validated
 
   return (
     // Handles live in this unclipped wrapper rather than the rounded card
@@ -62,8 +63,19 @@ export function PipelineNode({ data }: PipelineNodeProps) {
 
       <div
         className="flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-lg border bg-white shadow-sm transition-[opacity,box-shadow] hover:shadow-md"
-        style={{ borderColor: role.accent, opacity: dimmed ? 0.25 : 1 }}
-        onClick={() => selectNode(node.id)}
+        style={{
+          borderColor: role.accent,
+          opacity: dimmed ? 0.25 : 1,
+          boxShadow: selected ? '0 0 0 2px #0AACE0, 0 0 0 4px rgba(10, 172, 224, 0.25)' : undefined,
+        }}
+        onClick={(e) => {
+          // Ctrl/Cmd+click is React Flow's own multi-select toggle (default
+          // on this canvas) — let it do that instead of also popping the
+          // detail drawer open on every stage you're trying to add to a
+          // group-drag selection.
+          if (e.ctrlKey || e.metaKey) return
+          selectNode(node.id)
+        }}
         onMouseEnter={() => setHoveredNode(node.id)}
         onMouseLeave={() => setHoveredNode(null)}
       >
@@ -80,6 +92,11 @@ export function PipelineNode({ data }: PipelineNodeProps) {
               {role.label}
             </p>
           </div>
+          <span
+            className="mt-0.5 h-2.5 w-2.5 shrink-0 rounded-full"
+            style={{ background: validated ? '#047857' : '#C8890A' }}
+            title={validated ? 'Validated' : 'Pending validation'}
+          />
           <button
             type="button"
             aria-label={expanded ? 'Collapse node' : 'Expand node'}

@@ -1,5 +1,13 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
 import type { FilterState } from '../layout/filters'
+import {
+  loadAnnotations,
+  saveAnnotations,
+  getAnnotation as getAnnotationFromStore,
+  type AnnotationStore,
+  type NodeAnnotation,
+  type NodeEdits,
+} from '../persistence/annotationStorage'
 
 interface RoadmapContextValue {
   expandedNodeIds: Set<string>
@@ -23,6 +31,12 @@ interface RoadmapContextValue {
   /** When true, dragging from a stage's connect dots draws a manual connector; when false, dots are hidden and dragging a stage just moves it. */
   connectMode: boolean
   toggleConnectMode: () => void
+  /** Per-stage validation/notes/edits — browser-local, layered on top of the Excel-sourced data. */
+  annotations: AnnotationStore
+  getAnnotation: (nodeId: string) => NodeAnnotation
+  setValidated: (nodeId: string, validated: boolean) => void
+  saveNotes: (nodeId: string, notes: string) => void
+  saveEdits: (nodeId: string, edits: NodeEdits) => void
 }
 
 const RoadmapContext = createContext<RoadmapContextValue | null>(null)
@@ -42,6 +56,15 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
   // a dot. Turning this on hides nothing about layout dragging; it only
   // reveals the dots so a drag from one can draw a connector instead.
   const [connectMode, setConnectMode] = useState(false)
+  const [annotations, setAnnotationsState] = useState<AnnotationStore>(() => loadAnnotations())
+
+  const updateAnnotation = (nodeId: string, patch: Partial<NodeAnnotation>) => {
+    setAnnotationsState((prev) => {
+      const next: AnnotationStore = { nodes: { ...prev.nodes, [nodeId]: { ...getAnnotationFromStore(prev, nodeId), ...patch } } }
+      saveAnnotations(next)
+      return next
+    })
+  }
 
   // Stable reference unless an actual filter selection changes. This must NOT
   // be rebuilt on every hover — FlowCanvas treats a new `filters` object as
@@ -107,8 +130,14 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
       toggleSystemsOverlay: () => setShowSystemsOverlay((prev) => !prev),
       connectMode,
       toggleConnectMode: () => setConnectMode((prev) => !prev),
+      annotations,
+      getAnnotation: (nodeId: string) => getAnnotationFromStore(annotations, nodeId),
+      setValidated: (nodeId: string, validated: boolean) => updateAnnotation(nodeId, { validated }),
+      saveNotes: (nodeId: string, notes: string) =>
+        updateAnnotation(nodeId, { notes, notesUpdatedAt: new Date().toISOString() }),
+      saveEdits: (nodeId: string, edits: NodeEdits) => updateAnnotation(nodeId, { edits }),
     }),
-    [expandedNodeIds, selectedNodeId, hoveredNodeId, filters, showSystemsOverlay, connectMode],
+    [expandedNodeIds, selectedNodeId, hoveredNodeId, filters, showSystemsOverlay, connectMode, annotations],
   )
 
   return <RoadmapContext.Provider value={value}>{children}</RoadmapContext.Provider>
