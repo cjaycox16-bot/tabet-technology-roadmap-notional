@@ -42,7 +42,13 @@ export async function computeBaseLayout(data: RoadmapData, expandedNodeIds: Set<
     return {
       id: e.id,
       source: e.source,
+      // Explicit — nodes now carry 8 handles for freeform manual connectors
+      // (see PipelineNode.tsx), so an edge with no handle id would otherwise
+      // resolve to an arbitrary one instead of the vertical top/bottom pair
+      // the process flow is laid out around.
+      sourceHandle: 'bottom',
       target: e.target,
+      targetHandle: 'top',
       type: 'processEdge',
       deletable: false,
       animated: e.animated,

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 're
 import {
   addEdge,
   Background,
+  ConnectionMode,
   Controls,
   MarkerType,
   MiniMap,
@@ -13,6 +14,7 @@ import {
   type Edge,
   type NodeChange,
   type EdgeChange,
+  type XYPosition,
 } from '@xyflow/react'
 import type { RoadmapData } from '../data/types'
 import { computeBaseLayout } from '../layout/computeBaseLayout'
@@ -54,6 +56,14 @@ export interface FlowCanvasHandle {
   resetLayout: () => void
 }
 
+/** The two kinds of state change Ctrl+Z can revert — everything persisted to layoutStorage. */
+type UndoAction =
+  | { kind: 'move'; nodeId: string; from: XYPosition }
+  | { kind: 'addEdge'; edge: StoredCustomEdge }
+  | { kind: 'removeEdge'; edge: StoredCustomEdge }
+
+const UNDO_LIMIT = 50
+
 export function FlowCanvas({
   data,
   handleRef,
@@ -68,6 +78,18 @@ export function FlowCanvas({
   // ELK's layout pass is async — guard against an older request resolving
   // after a newer one (e.g. rapid expand/collapse clicks).
   const layoutRequestId = useRef(0)
+
+  // Ctrl+Z support. dragStartPositions captures where a node was when its
+  // drag began (set in onNodeDragStart, read in onNodeDragStop) since
+  // NodeChange events only ever carry the node's current position, never
+  // where it started.
+  const undoStack = useRef<UndoAction[]>([])
+  const dragStartPositions = useRef(new Map<string, XYPosition>())
+
+  const pushUndo = useCallback((action: UndoAction) => {
+    undoStack.current.push(action)
+    if (undoStack.current.length > UNDO_LIMIT) undoStack.current.shift()
+  }, [])
 
   const applyBaseLayout = useCallback(() => {
     const requestId = ++layoutRequestId.current
@@ -118,6 +140,8 @@ export function FlowCanvas({
   useImperativeHandle(handleRef, () => ({
     resetLayout: () => {
       clearLayout()
+      undoStack.current = []
+      dragStartPositions.current.clear()
       applyBaseLayout()
     },
   }))
@@ -127,25 +151,32 @@ export function FlowCanvas({
       onNodesChangeInternal(changes)
       for (const change of changes) {
         if (change.type === 'position' && change.dragging === false && change.position) {
+          const from = dragStartPositions.current.get(change.id)
+          dragStartPositions.current.delete(change.id)
+          if (from && (from.x !== change.position.x || from.y !== change.position.y)) {
+            pushUndo({ kind: 'move', nodeId: change.id, from })
+          }
           const stored = loadLayout()
           stored.positions[change.id] = change.position
           saveLayout(stored)
         }
       }
     },
-    [onNodesChangeInternal],
+    [onNodesChangeInternal, pushUndo],
   )
 
   const handleEdgesChange = useCallback(
     (changes: EdgeChange[]) => {
       onEdgesChangeInternal(changes)
-      const removedCustomIds = changes.filter((c) => c.type === 'remove').map((c) => c.id)
-      if (removedCustomIds.length === 0) return
+      const removedIds = changes.filter((c) => c.type === 'remove').map((c) => c.id)
+      if (removedIds.length === 0) return
       const stored = loadLayout()
-      stored.customEdges = stored.customEdges.filter((ce) => !removedCustomIds.includes(ce.id))
+      const removed = stored.customEdges.filter((ce) => removedIds.includes(ce.id))
+      for (const ce of removed) pushUndo({ kind: 'removeEdge', edge: ce })
+      stored.customEdges = stored.customEdges.filter((ce) => !removedIds.includes(ce.id))
       saveLayout(stored)
     },
-    [onEdgesChangeInternal],
+    [onEdgesChangeInternal, pushUndo],
   )
 
   const handleConnect = useCallback(
@@ -161,9 +192,43 @@ export function FlowCanvas({
       const stored = loadLayout()
       stored.customEdges.push(customEdge)
       saveLayout(stored)
+      pushUndo({ kind: 'addEdge', edge: customEdge })
     },
-    [setEdges],
+    [setEdges, pushUndo],
   )
+
+  const undo = useCallback(() => {
+    const action = undoStack.current.pop()
+    if (!action) return
+    if (action.kind === 'move') {
+      setNodes((nds) => nds.map((n) => (n.id === action.nodeId ? { ...n, position: action.from } : n)))
+      const stored = loadLayout()
+      stored.positions[action.nodeId] = action.from
+      saveLayout(stored)
+    } else if (action.kind === 'addEdge') {
+      setEdges((eds) => eds.filter((e) => e.id !== action.edge.id))
+      const stored = loadLayout()
+      stored.customEdges = stored.customEdges.filter((ce) => ce.id !== action.edge.id)
+      saveLayout(stored)
+    } else {
+      setEdges((eds) => addEdge(customEdgeToFlowEdge(action.edge), eds))
+      const stored = loadLayout()
+      stored.customEdges.push(action.edge)
+      saveLayout(stored)
+    }
+  }, [setNodes, setEdges])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 'z' || !(event.ctrlKey || event.metaKey) || event.shiftKey) return
+      const target = event.target as HTMLElement | null
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return
+      event.preventDefault()
+      undo()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [undo])
 
   return (
     <ReactFlow
@@ -171,9 +236,11 @@ export function FlowCanvas({
       edges={renderedEdges}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
+      connectionMode={ConnectionMode.Loose}
       onNodesChange={handleNodesChange}
       onEdgesChange={handleEdgesChange}
       onConnect={handleConnect}
+      onNodeDragStart={(_event, node) => dragStartPositions.current.set(node.id, node.position)}
       deleteKeyCode={['Backspace', 'Delete']}
       fitView
       fitViewOptions={{ padding: 0.2 }}

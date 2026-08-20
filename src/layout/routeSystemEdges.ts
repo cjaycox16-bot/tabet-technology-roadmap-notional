@@ -42,6 +42,34 @@ const LANE_GAP = 32
 const LANE_SPACING = 20
 /** Keep tap points within the middle slice of a node's height, away from its header/badge. */
 const TAP_MARGIN_FRACTION = 0.18
+/** Clearance kept between a detoured line and the row of nodes it's stepping around. */
+const CLEAR_MARGIN = 20
+
+/**
+ * Nodes (other than the edge's own endpoints) whose box crosses the
+ * horizontal band between x1 and x2 at height y — i.e. what a straight tap
+ * stub at that height would cut across. Several side-by-side "work center"
+ * nodes sitting between a tap point and its bus lane is the common case
+ * (e.g. reaching the leftmost of 4 parallel nodes when the lane runs past
+ * all of them on the right).
+ */
+function findObstructions(boxes: NodeBox[], excludeIds: Set<string>, y: number, x1: number, x2: number): NodeBox[] {
+  const lo = Math.min(x1, x2)
+  const hi = Math.max(x1, x2)
+  return boxes.filter((box) => {
+    if (excludeIds.has(box.id)) return false
+    const overlapsX = box.x < hi && box.x + box.width > lo
+    const overlapsY = y > box.y && y < box.y + box.height
+    return overlapsX && overlapsY
+  })
+}
+
+/** Y just clear of every obstruction at once, on whichever side is the shorter detour from y. */
+function clearanceY(obstructions: NodeBox[], y: number): number {
+  const above = Math.min(...obstructions.map((b) => b.y)) - CLEAR_MARGIN
+  const below = Math.max(...obstructions.map((b) => b.y + b.height)) + CLEAR_MARGIN
+  return Math.abs(y - above) <= Math.abs(y - below) ? above : below
+}
 
 /**
  * Connections within the same category that share an endpoint — a fan-out
@@ -177,13 +205,26 @@ export function routeSystemEdges(nodes: NodeBox[], edges: SystemEdgeInput[]): Ma
     const targetY = nextTapY(edge.target, side, target)
     const sourceTapX = side === 'right' ? source.x + source.width : source.x
     const targetTapX = side === 'right' ? target.x + target.width : target.x
+    const endpointIds = new Set([edge.source, edge.target])
 
-    routes.set(edge.id, [
-      { x: sourceTapX, y: sourceY },
-      { x: laneX, y: sourceY },
-      { x: laneX, y: targetY },
-      { x: targetTapX, y: targetY },
-    ])
+    // A tap stub normally runs straight across, at the tap's own height, to
+    // the lane. If that would cut across another node's box (e.g. reaching
+    // past a sibling to a lane on the far side), step around it instead:
+    // up/down to clear the whole row, then across.
+    const sourceBlockers = findObstructions(nodes, endpointIds, sourceY, sourceTapX, laneX)
+    const sourceLaneY = sourceBlockers.length > 0 ? clearanceY(sourceBlockers, sourceY) : sourceY
+
+    const targetBlockers = findObstructions(nodes, endpointIds, targetY, targetTapX, laneX)
+    const targetLaneY = targetBlockers.length > 0 ? clearanceY(targetBlockers, targetY) : targetY
+
+    const points: RoutePoint[] = [{ x: sourceTapX, y: sourceY }]
+    if (sourceLaneY !== sourceY) points.push({ x: sourceTapX, y: sourceLaneY })
+    points.push({ x: laneX, y: sourceLaneY })
+    points.push({ x: laneX, y: targetLaneY })
+    if (targetLaneY !== targetY) points.push({ x: targetTapX, y: targetLaneY })
+    points.push({ x: targetTapX, y: targetY })
+
+    routes.set(edge.id, points)
   }
 
   return routes

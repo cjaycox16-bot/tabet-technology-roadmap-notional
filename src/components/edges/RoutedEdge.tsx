@@ -2,44 +2,53 @@ import { BaseEdge, type EdgeProps } from '@xyflow/react'
 import { useRoadmap } from '../../context/RoadmapContext'
 import type { RoutePoint } from '../../layout/routeSystemEdges'
 
-const CURVE_REACH = 42
-const STUB_BEND = 0.6
+const CORNER_RADIUS = 30
 
 /**
- * Renders routeSystemEdges' 4-point route — [source tap, lane-near-source,
- * lane-near-target, target tap] — as one flowing curve instead of straight
- * segments with rounded corners. The tap stubs leave each node horizontally
- * and bend into the lane's vertical run via cubic beziers; the lane run
- * itself stays a straight vertical line (the "trunk" of the cable), the
- * same convention wiring diagrams use. Bypasses React Flow's automatic
- * handle-to-handle path calculation entirely — that's the point of
- * pre-computing the route.
+ * Renders routeSystemEdges' route — a straight-segment polyline that may run
+ * to 6 points when a tap stub had to step around a sibling node — as one
+ * continuously flowing line instead of hard corners. Standard rounded-corner
+ * construction: at each interior waypoint, pull back along both adjacent
+ * segments by the corner radius (clamped to half the shorter segment, so
+ * short detour hops never overshoot) and swap the sharp vertex for a
+ * quadratic curve between the two pull-back points. Works for any number of
+ * waypoints, so it doesn't care whether routeSystemEdges produced the plain
+ * 4-point route or a longer one with detour corners in it. Bypasses React
+ * Flow's automatic handle-to-handle path calculation entirely — that's the
+ * point of pre-computing the route.
  */
-function flowingPath(points: RoutePoint[]): string {
+function flowingPath(points: RoutePoint[], radius = CORNER_RADIUS): string {
   if (points.length < 2) return ''
-  if (points.length !== 4) return `M ${points.map((p) => `${p.x} ${p.y}`).join(' L ')}`
+  if (points.length === 2) return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`
 
-  const [p0, p1, p2, p3] = points
-  const laneLength = Math.abs(p2.y - p1.y)
-  const reach = Math.min(CURVE_REACH, laneLength / 2)
-  const laneDir = Math.sign(p2.y - p1.y) || 1
+  let d = `M ${points[0].x} ${points[0].y}`
+  for (let i = 1; i < points.length - 1; i++) {
+    const prev = points[i - 1]
+    const corner = points[i]
+    const next = points[i + 1]
 
-  // c1's job is to make the curve ARRIVE at p1 already heading toward p2 (so
-  // the following straight lane segment continues smoothly, no kink) — that
-  // means placing it on the p0 side of p1, not the p2 side. c2 mirrors this
-  // leaving p2. (An earlier version had both signs flipped, which produced
-  // a small backward hook right at each bend instead of a smooth turn.)
-  const c0 = { x: p0.x + (p1.x - p0.x) * STUB_BEND, y: p0.y }
-  const c1 = { x: p1.x, y: p1.y - laneDir * reach }
-  const c2 = { x: p2.x, y: p2.y + laneDir * reach }
-  const c3 = { x: p3.x + (p2.x - p3.x) * STUB_BEND, y: p3.y }
+    const inLength = Math.hypot(corner.x - prev.x, corner.y - prev.y)
+    const outLength = Math.hypot(next.x - corner.x, next.y - corner.y)
+    if (inLength === 0 || outLength === 0) {
+      d += ` L ${corner.x} ${corner.y}`
+      continue
+    }
+    const r = Math.min(radius, inLength / 2, outLength / 2)
 
-  return [
-    `M ${p0.x} ${p0.y}`,
-    `C ${c0.x} ${c0.y}, ${c1.x} ${c1.y}, ${p1.x} ${p1.y}`,
-    `L ${p2.x} ${p2.y}`,
-    `C ${c2.x} ${c2.y}, ${c3.x} ${c3.y}, ${p3.x} ${p3.y}`,
-  ].join(' ')
+    const enter = {
+      x: corner.x - ((corner.x - prev.x) / inLength) * r,
+      y: corner.y - ((corner.y - prev.y) / inLength) * r,
+    }
+    const exit = {
+      x: corner.x + ((next.x - corner.x) / outLength) * r,
+      y: corner.y + ((next.y - corner.y) / outLength) * r,
+    }
+
+    d += ` L ${enter.x} ${enter.y} Q ${corner.x} ${corner.y}, ${exit.x} ${exit.y}`
+  }
+  const last = points[points.length - 1]
+  d += ` L ${last.x} ${last.y}`
+  return d
 }
 
 /**

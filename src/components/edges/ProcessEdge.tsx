@@ -30,6 +30,11 @@ export function ProcessEdge({
     targetX,
     targetY,
     targetPosition,
+    // Default (5) reads as a near-right-angle at this node scale, especially
+    // where several edges fan out side by side (Project Management ->
+    // welding/laser/bending/machining). A bigger radius turns that into an
+    // actual smooth bend instead of a corner with the edges shaved off.
+    borderRadius: 24,
   })
 
   return (
