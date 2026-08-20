@@ -40,10 +40,13 @@ const CATEGORY_SIDE: Record<string, 'left' | 'right'> = {
 
 const LANE_GAP = 32
 const LANE_SPACING = 20
-/** Keep tap points within the middle slice of a node's height, away from its header/badge. */
-const TAP_MARGIN_FRACTION = 0.18
 /** Clearance kept between a detoured line and the row of nodes it's stepping around. */
 const CLEAR_MARGIN = 20
+
+/** Exact coordinate of a node's left/right connect dot — PipelineNode.tsx's Position.Left/Right handles. */
+function sideTapPoint(box: NodeBox, side: 'left' | 'right'): RoutePoint {
+  return { x: side === 'right' ? box.x + box.width : box.x, y: box.y + box.height / 2 }
+}
 
 /**
  * Nodes (other than the edge's own endpoints) whose box crosses the
@@ -126,9 +129,12 @@ function groupIntoComponents(edges: SystemEdgeInput[]): Map<string, string> {
  *    fan-out/fan-in cluster reads as a single trunk rather than N parallel
  *    lines. Components are still ordered by category first, so same-colored
  *    trunks land in adjacent lanes and read as a grouped band.
- * 2. Where several connections tap into the same node on the same side,
- *    their tap points are spread across that node's height instead of all
- *    converging on its exact center.
+ * 2. Every connection touching a given node on a given side taps that
+ *    node's actual left/right connect dot — the same one a manually-drawn
+ *    connector uses (see PipelineNode.tsx) — rather than a point invented
+ *    somewhere along its height. Multiple connections sharing that dot is
+ *    intentional: they leave straight out of the real endpoint together and
+ *    only fan apart once they reach their (possibly different) lanes.
  *
  * Node positions are taken as given (from elkLayout's process-flow-only
  * pass, or live drag positions from FlowCanvas) and never modified — this
@@ -158,27 +164,6 @@ export function routeSystemEdges(nodes: NodeBox[], edges: SystemEdgeInput[]): Ma
     return a.id.localeCompare(b.id)
   })
 
-  // How many connections tap into each (node, side) pair — used to fan
-  // their tap points out along the node's height.
-  const tapTotal = new Map<string, number>()
-  for (const e of ordered) {
-    const side = sideOf(e.category)
-    const sourceKey = `${e.source}:${side}`
-    const targetKey = `${e.target}:${side}`
-    tapTotal.set(sourceKey, (tapTotal.get(sourceKey) ?? 0) + 1)
-    tapTotal.set(targetKey, (tapTotal.get(targetKey) ?? 0) + 1)
-  }
-  const tapSeen = new Map<string, number>()
-  const nextTapY = (nodeId: string, side: 'left' | 'right', box: NodeBox) => {
-    const key = `${nodeId}:${side}`
-    const total = tapTotal.get(key) ?? 1
-    const index = tapSeen.get(key) ?? 0
-    tapSeen.set(key, index + 1)
-    if (total <= 1) return box.y + box.height / 2
-    const usable = box.height * (1 - TAP_MARGIN_FRACTION * 2)
-    return box.y + box.height * TAP_MARGIN_FRACTION + (usable * index) / (total - 1)
-  }
-
   // One lane per COMPONENT, not per edge — every edge in the same component
   // reuses its component's lane the first time it's assigned.
   const componentLane = new Map<string, number>()
@@ -201,10 +186,12 @@ export function routeSystemEdges(nodes: NodeBox[], edges: SystemEdgeInput[]): Ma
 
     const side = sideOf(edge.category)
     const laneX = laneXFor(edge)
-    const sourceY = nextTapY(edge.source, side, source)
-    const targetY = nextTapY(edge.target, side, target)
-    const sourceTapX = side === 'right' ? source.x + source.width : source.x
-    const targetTapX = side === 'right' ? target.x + target.width : target.x
+    const sourceTap = sideTapPoint(source, side)
+    const targetTap = sideTapPoint(target, side)
+    const sourceY = sourceTap.y
+    const targetY = targetTap.y
+    const sourceTapX = sourceTap.x
+    const targetTapX = targetTap.x
     const endpointIds = new Set([edge.source, edge.target])
 
     // A tap stub normally runs straight across, at the tap's own height, to
