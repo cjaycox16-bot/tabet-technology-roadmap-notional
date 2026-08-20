@@ -1,4 +1,5 @@
-import { Handle, Position, type NodeProps } from '@xyflow/react'
+import { Fragment } from 'react'
+import { Handle, Position, type HandleType, type NodeProps } from '@xyflow/react'
 import type { FlowNode } from '../../layout/buildGraph'
 import { useRoadmap } from '../../context/RoadmapContext'
 import { isPlaceholder } from '../../data/lookup'
@@ -11,8 +12,33 @@ type PipelineNodeProps = NodeProps<Extract<FlowNode, { type: 'pipelineNode' }>>
 const CORNER_INSET = '14%'
 const CORNER_FAR = `calc(100% - 14%)`
 
+const HANDLE_TYPES: HandleType[] = ['source', 'target']
+
+/**
+ * The 8 connect points. 'top'/'bottom' stay mounted regardless of mode — the
+ * vertical process-flow edges (computeBaseLayout.ts) reference them by id.
+ * The other 6 only exist while connectMode is on: a <Handle> always carries
+ * React Flow's "nodrag" class, so leaving them mounted in move mode would
+ * turn every side/corner into a small dead spot you can't grab to drag the
+ * stage — the exact problem that mode exists to avoid.
+ *
+ * Each point renders BOTH a source and a target handle stacked on the same
+ * spot, so a drag can start or end at any of the 8 regardless of direction
+ * — without that, only source-to-target drags would work reliably.
+ */
+const HANDLE_POINTS: { id: string; position: Position; alwaysOn?: boolean; style?: React.CSSProperties }[] = [
+  { id: 'top', position: Position.Top, alwaysOn: true },
+  { id: 'top-left', position: Position.Top, style: { left: CORNER_INSET } },
+  { id: 'top-right', position: Position.Top, style: { left: CORNER_FAR } },
+  { id: 'right', position: Position.Right },
+  { id: 'bottom-right', position: Position.Bottom, style: { left: CORNER_FAR } },
+  { id: 'bottom', position: Position.Bottom, alwaysOn: true },
+  { id: 'bottom-left', position: Position.Bottom, style: { left: CORNER_INSET } },
+  { id: 'left', position: Position.Left },
+]
+
 export function PipelineNode({ data }: PipelineNodeProps) {
-  const { selectNode, toggleNodeExpanded, setHoveredNode } = useRoadmap()
+  const { selectNode, toggleNodeExpanded, setHoveredNode, connectMode } = useRoadmap()
   const { node, expanded, dimmed } = data
   const role = ROLE_STYLE[node.role]
   const status = STATUS_STYLE[node.status]
@@ -21,18 +47,18 @@ export function PipelineNode({ data }: PipelineNodeProps) {
     // Handles live in this unclipped wrapper rather than the rounded card
     // below — overflow-hidden on the card (needed to keep its tinted header
     // inside the rounded corners) would otherwise clip the half of each dot
-    // that sits outside the border. connectionMode="loose" on <ReactFlow>
-    // (FlowCanvas.tsx) is what lets every one of these act as either end of
-    // a dragged connection, not just the semantic top/bottom pair.
+    // that sits outside the border.
     <div className="relative h-full w-full">
-      <Handle id="top" type="target" position={Position.Top} />
-      <Handle id="top-left" type="source" position={Position.Top} style={{ left: CORNER_INSET }} />
-      <Handle id="top-right" type="source" position={Position.Top} style={{ left: CORNER_FAR }} />
-      <Handle id="right" type="source" position={Position.Right} />
-      <Handle id="bottom-right" type="source" position={Position.Bottom} style={{ left: CORNER_FAR }} />
-      <Handle id="bottom" type="source" position={Position.Bottom} />
-      <Handle id="bottom-left" type="source" position={Position.Bottom} style={{ left: CORNER_INSET }} />
-      <Handle id="left" type="source" position={Position.Left} />
+      {HANDLE_POINTS.map(({ id, position, alwaysOn, style }) => {
+        if (!alwaysOn && !connectMode) return null
+        return (
+          <Fragment key={id}>
+            {HANDLE_TYPES.map((type) => (
+              <Handle key={type} id={id} type={type} position={position} style={style} />
+            ))}
+          </Fragment>
+        )
+      })}
 
       <div
         className="flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-lg border bg-white shadow-sm transition-[opacity,box-shadow] hover:shadow-md"

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 're
 import {
   addEdge,
   Background,
-  ConnectionMode,
   Controls,
   MarkerType,
   MiniMap,
@@ -10,6 +9,7 @@ import {
   useEdgesState,
   useNodesState,
   useReactFlow,
+  useUpdateNodeInternals,
   type Connection,
   type Edge,
   type NodeChange,
@@ -71,8 +71,9 @@ export function FlowCanvas({
   data: RoadmapData
   handleRef?: React.RefObject<FlowCanvasHandle | null>
 }) {
-  const { expandedNodeIds, filters, showSystemsOverlay } = useRoadmap()
+  const { expandedNodeIds, filters, showSystemsOverlay, connectMode } = useRoadmap()
   const { fitView } = useReactFlow()
+  const updateNodeInternals = useUpdateNodeInternals()
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState<FlowNode>([])
   const [edges, setEdges, onEdgesChangeInternal] = useEdgesState<Edge>([])
   // ELK's layout pass is async — guard against an older request resolving
@@ -116,6 +117,18 @@ export function FlowCanvas({
   useEffect(() => {
     applyBaseLayout()
   }, [applyBaseLayout])
+
+  // Toggling connectMode mounts/unmounts 6 of each node's 8 handles
+  // (PipelineNode.tsx). React Flow only measures a node's handle positions
+  // on its own mount — adding handles to an already-mounted node doesn't
+  // register them, so connections silently failed to start or land on them
+  // until told to re-measure.
+  useEffect(() => {
+    for (const node of nodes) updateNodeInternals(node.id)
+    // Depends on nodes.length rather than `nodes` itself so this only fires
+    // on the connectMode flip (or the node count changing), not on every
+    // position update while a node is mid-drag.
+  }, [connectMode, nodes.length, updateNodeInternals])
 
   // Recomputed from whatever the CURRENT node positions are (including drag
   // overrides), not from the layout pass above — that's what makes the
@@ -232,11 +245,12 @@ export function FlowCanvas({
 
   return (
     <ReactFlow
+      className={connectMode ? 'connect-mode' : undefined}
       nodes={nodes}
       edges={renderedEdges}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
-      connectionMode={ConnectionMode.Loose}
+      nodesConnectable={connectMode}
       onNodesChange={handleNodesChange}
       onEdgesChange={handleEdgesChange}
       onConnect={handleConnect}

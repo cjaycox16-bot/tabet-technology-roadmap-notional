@@ -42,10 +42,24 @@ const LANE_GAP = 32
 const LANE_SPACING = 20
 /** Clearance kept between a detoured line and the row of nodes it's stepping around. */
 const CLEAR_MARGIN = 20
+/**
+ * Minimum straight distance a line travels leaving/entering a tap point
+ * before it's allowed to bend. Without this, a detour (see clearanceY)
+ * could bend immediately at the node's border, so the line would meet its
+ * connect dot at a steep angle instead of straight-on — the dot's own
+ * "straight out" direction is horizontal, and anything touching it has to
+ * honor that for at least this many px.
+ */
+const STUB_LENGTH = 40
 
 /** Exact coordinate of a node's left/right connect dot — PipelineNode.tsx's Position.Left/Right handles. */
 function sideTapPoint(box: NodeBox, side: 'left' | 'right'): RoutePoint {
   return { x: side === 'right' ? box.x + box.width : box.x, y: box.y + box.height / 2 }
+}
+
+/** The tap point pushed straight out by STUB_LENGTH — where a bend is first allowed. */
+function stubPoint(tap: RoutePoint, side: 'left' | 'right'): RoutePoint {
+  return { x: tap.x + (side === 'right' ? STUB_LENGTH : -STUB_LENGTH), y: tap.y }
 }
 
 /**
@@ -188,28 +202,27 @@ export function routeSystemEdges(nodes: NodeBox[], edges: SystemEdgeInput[]): Ma
     const laneX = laneXFor(edge)
     const sourceTap = sideTapPoint(source, side)
     const targetTap = sideTapPoint(target, side)
-    const sourceY = sourceTap.y
-    const targetY = targetTap.y
-    const sourceTapX = sourceTap.x
-    const targetTapX = targetTap.x
+    const sourceStub = stubPoint(sourceTap, side)
+    const targetStub = stubPoint(targetTap, side)
     const endpointIds = new Set([edge.source, edge.target])
 
-    // A tap stub normally runs straight across, at the tap's own height, to
-    // the lane. If that would cut across another node's box (e.g. reaching
-    // past a sibling to a lane on the far side), step around it instead:
-    // up/down to clear the whole row, then across.
-    const sourceBlockers = findObstructions(nodes, endpointIds, sourceY, sourceTapX, laneX)
-    const sourceLaneY = sourceBlockers.length > 0 ? clearanceY(sourceBlockers, sourceY) : sourceY
+    // Any bending is only allowed to start at the stub, never at the tap
+    // itself — that's what keeps the final approach into the dot straight.
+    // If the straight run from stub to lane would cut across another node's
+    // box (e.g. reaching past a sibling to a lane on the far side), step
+    // around it instead: up/down to clear the whole row, then across.
+    const sourceBlockers = findObstructions(nodes, endpointIds, sourceStub.y, sourceStub.x, laneX)
+    const sourceLaneY = sourceBlockers.length > 0 ? clearanceY(sourceBlockers, sourceStub.y) : sourceStub.y
 
-    const targetBlockers = findObstructions(nodes, endpointIds, targetY, targetTapX, laneX)
-    const targetLaneY = targetBlockers.length > 0 ? clearanceY(targetBlockers, targetY) : targetY
+    const targetBlockers = findObstructions(nodes, endpointIds, targetStub.y, targetStub.x, laneX)
+    const targetLaneY = targetBlockers.length > 0 ? clearanceY(targetBlockers, targetStub.y) : targetStub.y
 
-    const points: RoutePoint[] = [{ x: sourceTapX, y: sourceY }]
-    if (sourceLaneY !== sourceY) points.push({ x: sourceTapX, y: sourceLaneY })
+    const points: RoutePoint[] = [sourceTap, sourceStub]
+    if (sourceLaneY !== sourceStub.y) points.push({ x: sourceStub.x, y: sourceLaneY })
     points.push({ x: laneX, y: sourceLaneY })
     points.push({ x: laneX, y: targetLaneY })
-    if (targetLaneY !== targetY) points.push({ x: targetTapX, y: targetLaneY })
-    points.push({ x: targetTapX, y: targetY })
+    if (targetLaneY !== targetStub.y) points.push({ x: targetStub.x, y: targetLaneY })
+    points.push(targetStub, targetTap)
 
     routes.set(edge.id, points)
   }

@@ -45,7 +45,8 @@ export function Legend({ data }: { data: RoadmapData }) {
           <span className="text-[#3D5168]">Your connector</span>
         </div>
         <p className="mt-1.5 text-[10px] leading-snug text-[#94A3B8]">
-          Drag from the small cyan dot at the top or bottom of a stage to the dot on another stage — saved to this browser only.
+          Switch the header to "Draw connectors" to reveal a cyan dot on every side of each stage, then drag between
+          two — saved to this browser only.
         </p>
       </div>
 

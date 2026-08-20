@@ -97,3 +97,12 @@ body {
   cursor: crosshair;
   box-shadow: 0 0 0 1px rgba(11, 21, 35, 0.35), 0 0 0 5px rgba(10, 172, 224, 0.3);
 }
+
+/* Move mode (connectMode off, the default — see RoadmapContext.tsx): the
+   top/bottom handles stay mounted for the process-flow edges to reference,
+   but with nothing to indicate and connecting disabled, showing them as
+   live dots would just invite a click that does nothing. */
+.react-flow:not(.connect-mode) .react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+}

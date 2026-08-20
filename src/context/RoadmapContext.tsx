@@ -20,6 +20,9 @@ interface RoadmapContextValue {
   clearFilters: () => void
   showSystemsOverlay: boolean
   toggleSystemsOverlay: () => void
+  /** When true, dragging from a stage's connect dots draws a manual connector; when false, dots are hidden and dragging a stage just moves it. */
+  connectMode: boolean
+  toggleConnectMode: () => void
 }
 
 const RoadmapContext = createContext<RoadmapContextValue | null>(null)
@@ -33,6 +36,12 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
   const [systemCategories, setSystemCategories] = useState<Set<string>>(new Set())
   const [search, setSearchState] = useState('')
   const [showSystemsOverlay, setShowSystemsOverlay] = useState(true)
+  // Off by default — dragging a stage to reposition it is the far more
+  // common interaction, and with connect dots on all 4 sides + corners
+  // (PipelineNode.tsx) there's no room on the card to grab that isn't also
+  // a dot. Turning this on hides nothing about layout dragging; it only
+  // reveals the dots so a drag from one can draw a connector instead.
+  const [connectMode, setConnectMode] = useState(false)
 
   // Stable reference unless an actual filter selection changes. This must NOT
   // be rebuilt on every hover — FlowCanvas treats a new `filters` object as
@@ -96,8 +105,10 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
       },
       showSystemsOverlay,
       toggleSystemsOverlay: () => setShowSystemsOverlay((prev) => !prev),
+      connectMode,
+      toggleConnectMode: () => setConnectMode((prev) => !prev),
     }),
-    [expandedNodeIds, selectedNodeId, hoveredNodeId, filters, showSystemsOverlay],
+    [expandedNodeIds, selectedNodeId, hoveredNodeId, filters, showSystemsOverlay, connectMode],
   )
 
   return <RoadmapContext.Provider value={value}>{children}</RoadmapContext.Provider>
