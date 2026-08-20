@@ -22,6 +22,7 @@ import { loadLayout, saveLayout, clearLayout, type StoredCustomEdge } from '../p
 import { useRoadmap } from '../context/RoadmapContext'
 import { PipelineNode } from './nodes/PipelineNode'
 import { RoutedEdge } from './edges/RoutedEdge'
+import { ProcessEdge } from './edges/ProcessEdge'
 import { ROLE_STYLE } from './nodes/roleStyles'
 
 const nodeTypes = {
@@ -30,6 +31,7 @@ const nodeTypes = {
 
 const edgeTypes = {
   systemRoute: RoutedEdge,
+  processEdge: ProcessEdge,
 }
 
 const CUSTOM_EDGE_STYLE = { stroke: '#0AACE0', strokeWidth: 2, strokeDasharray: '2 5' }

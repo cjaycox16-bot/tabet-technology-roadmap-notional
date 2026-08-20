@@ -43,7 +43,7 @@ export async function computeBaseLayout(data: RoadmapData, expandedNodeIds: Set<
       id: e.id,
       source: e.source,
       target: e.target,
-      type: 'smoothstep',
+      type: 'processEdge',
       deletable: false,
       animated: e.animated,
       label: e.label,
