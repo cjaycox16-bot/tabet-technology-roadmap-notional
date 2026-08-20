@@ -21,7 +21,7 @@ export function PipelineNode({ data }: PipelineNodeProps) {
       onMouseEnter={() => setHoveredNode(node.id)}
       onMouseLeave={() => setHoveredNode(null)}
     >
-      <Handle type="target" position={Position.Top} style={{ background: role.accent }} />
+      <Handle type="target" position={Position.Top} />
 
       <div className="flex items-start gap-2 px-3 pt-2.5" style={{ background: role.tint }}>
         <span
@@ -81,7 +81,7 @@ export function PipelineNode({ data }: PipelineNodeProps) {
         </div>
       )}
 
-      <Handle type="source" position={Position.Bottom} style={{ background: role.accent }} />
+      <Handle type="source" position={Position.Bottom} />
     </div>
   )
 }

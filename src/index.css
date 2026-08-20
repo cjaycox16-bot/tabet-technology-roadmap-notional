@@ -79,3 +79,21 @@ body {
 .react-flow__node.dragging {
   transition: none;
 }
+
+/* Default handle size (6px, colored to match each node's role accent) was
+   only really visible zoomed all the way into a single node — at the
+   default fit-to-view zoom across 18 stages it shrank to sub-pixel and was
+   effectively undiscoverable. Sized up, given a consistent color (matching
+   the "Your connector" legend swatch) so it reads as "the connect point"
+   regardless of node color, and a hover halo for feedback. */
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  background-color: #0aace0;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(11, 21, 35, 0.35);
+}
+.react-flow__handle:hover {
+  cursor: crosshair;
+  box-shadow: 0 0 0 1px rgba(11, 21, 35, 0.35), 0 0 0 5px rgba(10, 172, 224, 0.3);
+}

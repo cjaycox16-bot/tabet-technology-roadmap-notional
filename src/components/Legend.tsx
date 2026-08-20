@@ -45,7 +45,7 @@ export function Legend({ data }: { data: RoadmapData }) {
           <span className="text-[#3D5168]">Your connector</span>
         </div>
         <p className="mt-1.5 text-[10px] leading-snug text-[#94A3B8]">
-          Drag a box, or drag between two dots to connect them — saved to this browser only.
+          Drag from the small cyan dot at the top or bottom of a stage to the dot on another stage — saved to this browser only.
         </p>
       </div>
 
