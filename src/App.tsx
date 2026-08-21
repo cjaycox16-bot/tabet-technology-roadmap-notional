@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { LayoutDashboardIcon } from 'lucide-react'
 import { ReactFlowProvider } from '@xyflow/react'
 import { RoadmapProvider, useRoadmap } from './context/RoadmapContext'
@@ -9,14 +9,25 @@ import { Toolbar } from './components/Toolbar'
 import { DashboardPage } from './components/DashboardPage'
 import { AiAssistant } from './components/AiAssistant'
 import { roadmapData } from './data/roadmapData'
+import { buildSystemCategoryStyles } from './layout/systemStyle'
+
+/** Header abbreviations for the connector-category picker — full names (systemStyle.ts) don't fit the chip row. */
+const CATEGORY_ABBREVIATION: Record<string, string> = {
+  'ERP/MRP System': 'ERP/MRP',
+  'Department Software': 'Dept. SW',
+  'Spreadsheet/Tracker': 'Spreadsheet',
+  'QMS / Compliance': 'QMS',
+  'AI/Automation': 'AI/Auto',
+}
 
 type View = 'flow' | 'dashboard'
 
 function AppShell() {
   const flowCanvasRef = useRef<FlowCanvasHandle>(null)
-  const { connectMode, toggleConnectMode, annotations } = useRoadmap()
+  const { connectMode, toggleConnectMode, connectorCategory, setConnectorCategory, annotations } = useRoadmap()
   const [view, setView] = useState<View>('flow')
   const validatedCount = roadmapData.nodes.filter((n) => annotations.nodes[n.id]?.validated).length
+  const categoryStyles = useMemo(() => buildSystemCategoryStyles(roadmapData.systemConnections), [])
 
   return (
     <div className="flex h-screen w-screen flex-col bg-[#F0F5FA]">
@@ -75,6 +86,37 @@ function AppShell() {
                   Draw connectors
                 </button>
               </div>
+
+              {connectMode && (
+                <div className="flex items-center gap-1 rounded-full border border-white/25 p-0.5 text-xs font-medium">
+                  <button
+                    type="button"
+                    onClick={() => setConnectorCategory(null)}
+                    className={`rounded-full px-2 py-1 transition-colors ${
+                      connectorCategory === null ? 'bg-white text-[#09295F]' : 'text-white/70 hover:bg-white/10'
+                    }`}
+                    title="Draw the next connector with the generic manual (teal dashed) style"
+                  >
+                    Manual
+                  </button>
+                  {categoryStyles.map((style) => (
+                    <button
+                      key={style.category}
+                      type="button"
+                      onClick={() => setConnectorCategory(style.category)}
+                      className={`flex items-center gap-1 rounded-full px-2 py-1 transition-colors ${
+                        connectorCategory === style.category
+                          ? 'bg-white text-[#09295F]'
+                          : 'text-white/70 hover:bg-white/10'
+                      }`}
+                      title={`Draw the next connector styled as ${style.category}`}
+                    >
+                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: style.stroke }} />
+                      {CATEGORY_ABBREVIATION[style.category] ?? style.category}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <button
                 type="button"

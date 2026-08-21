@@ -22,11 +22,18 @@ import { buildSystemFlowEdges } from '../layout/systemFlowEdges'
 import type { FlowNode } from '../layout/buildGraph'
 import { loadLayout, saveLayout, clearLayout, type StoredCustomEdge } from '../persistence/layoutStorage'
 import { loadLaneOffsets, saveLaneOffsets, clearLaneOffsets } from '../persistence/laneOffsetStorage'
+import {
+  loadSystemEndpointOverrides,
+  saveSystemEndpointOverrides,
+  clearSystemEndpointOverrides,
+  type SystemEndpointOverrides,
+} from '../persistence/systemEndpointStorage'
 import { useRoadmap } from '../context/RoadmapContext'
 import { PipelineNode } from './nodes/PipelineNode'
 import { RoutedEdge } from './edges/RoutedEdge'
 import { ProcessEdge } from './edges/ProcessEdge'
 import { ROLE_STYLE } from './nodes/roleStyles'
+import { buildSystemCategoryStyles, type SystemCategoryStyle } from '../layout/systemStyle'
 
 const nodeTypes = {
   pipelineNode: PipelineNode,
@@ -39,7 +46,19 @@ const edgeTypes = {
 
 const CUSTOM_EDGE_STYLE = { stroke: '#0AACE0', strokeWidth: 2, strokeDasharray: '2 5' }
 
-function customEdgeToFlowEdge(ce: StoredCustomEdge): Edge {
+/**
+ * A manually-drawn connector with a category selected (App.tsx's picker,
+ * shown while "Draw connectors" mode is on) is styled like that category's
+ * real system/data-flow lines instead of the generic teal-dashed default —
+ * `categoryStyles` comes from the same `buildSystemCategoryStyles` the
+ * Legend uses, so the two always agree.
+ */
+function customEdgeToFlowEdge(ce: StoredCustomEdge, categoryStyles: Map<string, SystemCategoryStyle>): Edge {
+  const categoryStyle = ce.category ? categoryStyles.get(ce.category) : undefined
+  const stroke = categoryStyle?.stroke ?? CUSTOM_EDGE_STYLE.stroke
+  const style = categoryStyle
+    ? { stroke: categoryStyle.stroke, strokeWidth: 2, strokeDasharray: categoryStyle.dasharray }
+    : CUSTOM_EDGE_STYLE
   return {
     id: ce.id,
     source: ce.source,
@@ -48,8 +67,9 @@ function customEdgeToFlowEdge(ce: StoredCustomEdge): Edge {
     targetHandle: ce.targetHandle,
     type: 'smoothstep',
     deletable: true,
-    style: CUSTOM_EDGE_STYLE,
-    markerEnd: { type: MarkerType.ArrowClosed, color: CUSTOM_EDGE_STYLE.stroke },
+    animated: categoryStyle?.animated ?? false,
+    style,
+    markerEnd: { type: MarkerType.ArrowClosed, color: stroke },
   }
 }
 
@@ -72,7 +92,7 @@ export function FlowCanvas({
   data: RoadmapData
   handleRef?: React.RefObject<FlowCanvasHandle | null>
 }) {
-  const { expandedNodeIds, filters, showSystemsOverlay, connectMode } = useRoadmap()
+  const { expandedNodeIds, filters, showSystemsOverlay, connectMode, connectorCategory } = useRoadmap()
   const { fitView } = useReactFlow()
   const updateNodeInternals = useUpdateNodeInternals()
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState<FlowNode>([])
@@ -97,6 +117,25 @@ export function FlowCanvas({
     })
   }, [])
 
+  const [endpointOverrides, setEndpointOverrides] = useState<SystemEndpointOverrides>(() =>
+    loadSystemEndpointOverrides(),
+  )
+  const retargetSystemEdge = useCallback((connectionId: string, end: 'source' | 'target', newNodeId: string) => {
+    setEndpointOverrides((prev) => {
+      const next = { ...prev, [connectionId]: { ...prev[connectionId], [end]: newNodeId } }
+      saveSystemEndpointOverrides(next)
+      return next
+    })
+  }, [])
+
+  // Same reuse-the-Legend's-derivation pattern as Legend.tsx — keeps a
+  // manually-drawn connector's category-styled look in sync with the actual
+  // system/data-flow lines of that category.
+  const categoryStyles = useMemo(
+    () => new Map(buildSystemCategoryStyles(data.systemConnections).map((s) => [s.category, s])),
+    [data],
+  )
+
   const pushUndo = useCallback((action: UndoAction) => {
     undoStack.current.push(action)
     if (undoStack.current.length > UNDO_LIMIT) undoStack.current.shift()
@@ -116,13 +155,13 @@ export function FlowCanvas({
       })
       const customEdges = stored.customEdges
         .filter((ce) => visibleIds.has(ce.source) && visibleIds.has(ce.target))
-        .map(customEdgeToFlowEdge)
+        .map((ce) => customEdgeToFlowEdge(ce, categoryStyles))
 
       setNodes(mergedNodes)
       setEdges([...base.edges, ...customEdges])
       requestAnimationFrame(() => fitView({ padding: 0.2, duration: 300 }))
     })
-  }, [data, expandedNodeIds, filters, setNodes, setEdges, fitView])
+  }, [data, expandedNodeIds, filters, categoryStyles, setNodes, setEdges, fitView])
 
   useEffect(() => {
     applyBaseLayout()
@@ -155,8 +194,13 @@ export function FlowCanvas({
       width: typeof n.style?.width === 'number' ? n.style.width : 300,
       height: typeof n.style?.height === 'number' ? n.style.height : 112,
     }))
-    return buildSystemFlowEdges(data, filters, boxes, laneOffsets, nudgeLane)
-  }, [data, filters, showSystemsOverlay, nodes, laneOffsets, nudgeLane])
+    return buildSystemFlowEdges(data, filters, boxes, {
+      laneOffsets,
+      onNudgeLane: nudgeLane,
+      endpointOverrides,
+      onRetargetEndpoint: retargetSystemEdge,
+    })
+  }, [data, filters, showSystemsOverlay, nodes, laneOffsets, nudgeLane, endpointOverrides, retargetSystemEdge])
 
   const renderedEdges = useMemo(() => [...edges, ...systemEdges], [edges, systemEdges])
 
@@ -165,6 +209,8 @@ export function FlowCanvas({
       clearLayout()
       clearLaneOffsets()
       setLaneOffsets({})
+      clearSystemEndpointOverrides()
+      setEndpointOverrides({})
       undoStack.current = []
       dragStartPositions.current.clear()
       applyBaseLayout()
@@ -219,14 +265,15 @@ export function FlowCanvas({
         sourceHandle: connection.sourceHandle,
         target: connection.target,
         targetHandle: connection.targetHandle,
+        category: connectorCategory ?? undefined,
       }
-      setEdges((eds) => addEdge(customEdgeToFlowEdge(customEdge), eds))
+      setEdges((eds) => addEdge(customEdgeToFlowEdge(customEdge, categoryStyles), eds))
       const stored = loadLayout()
       stored.customEdges.push(customEdge)
       saveLayout(stored)
       pushUndo({ kind: 'addEdge', edge: customEdge })
     },
-    [setEdges, pushUndo],
+    [setEdges, pushUndo, connectorCategory, categoryStyles],
   )
 
   const undo = useCallback(() => {
@@ -244,12 +291,12 @@ export function FlowCanvas({
       stored.customEdges = stored.customEdges.filter((ce) => ce.id !== action.edge.id)
       saveLayout(stored)
     } else {
-      setEdges((eds) => addEdge(customEdgeToFlowEdge(action.edge), eds))
+      setEdges((eds) => addEdge(customEdgeToFlowEdge(action.edge, categoryStyles), eds))
       const stored = loadLayout()
       stored.customEdges.push(action.edge)
       saveLayout(stored)
     }
-  }, [setNodes, setEdges])
+  }, [setNodes, setEdges, categoryStyles])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

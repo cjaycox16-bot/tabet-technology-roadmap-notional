@@ -66,19 +66,57 @@ function flowingPath(points: RoutePoint[], radius = CORNER_RADIUS): string {
  * release rather than live (keeping the drag itself cheap: one edge
  * re-rendering per frame instead of every connection on the lane).
  */
+/** Radius of the small circular endpoint-retarget handles rendered at each end of the line. */
+const ENDPOINT_HANDLE_RADIUS = 5
+
+/**
+ * How far (in flow px) an endpoint handle sits back from the line's actual
+ * tap point, along the line itself. The tap point (routeSystemEdges.ts)
+ * lands exactly ON the node's border, and React Flow paints the nodes pane
+ * on top of the edges pane — so a handle drawn exactly at the tap would sit
+ * underneath the node's own draggable surface and never receive a pointer
+ * event. Nudging it this far out along the first/last route segment (well
+ * short of the STUB_LENGTH bend point) keeps it visually "at the end of the
+ * line" while landing on open canvas where it's actually clickable.
+ */
+const ENDPOINT_HANDLE_SETBACK = 12
+
+function setBackPoint(tap: RoutePoint, next: RoutePoint, distance: number): RoutePoint {
+  const dx = next.x - tap.x
+  const dy = next.y - tap.y
+  const length = Math.hypot(dx, dy)
+  if (length === 0) return tap
+  const d = Math.min(distance, length)
+  return { x: tap.x + (dx / length) * d, y: tap.y + (dy / length) * d }
+}
+
+type EndpointDrag = { end: 'source' | 'target'; point: RoutePoint }
+
 export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeProps) {
   const { focusNodeId, connectMode } = useRoadmap()
-  const { screenToFlowPosition } = useReactFlow()
+  const { screenToFlowPosition, getNodes } = useReactFlow()
   const points = (data?.points as RoutePoint[] | undefined) ?? []
   const dasharray = data?.dasharray as string | undefined
   const filterDimmed = Boolean(data?.filterDimmed)
   const laneKey = data?.laneKey as string | undefined
   const onNudgeLane = data?.onNudgeLane as ((laneKey: string, deltaX: number) => void) | undefined
+  const onRetargetEndpoint = data?.onRetargetEndpoint as
+    | ((connectionId: string, end: 'source' | 'target', newNodeId: string) => void)
+    | undefined
+  const connectionId = (data?.connectionId as string | undefined) ?? id
   const draggable = !connectMode && Boolean(laneKey) && Boolean(onNudgeLane)
+  const endpointsEditable = !connectMode && Boolean(onRetargetEndpoint)
 
   const dragStartFlowX = useRef(0)
   const [dragging, setDragging] = useState(false)
   const [previewDeltaX, setPreviewDeltaX] = useState(0)
+
+  // Endpoint-retarget drag — separate from the whole-line lane-nudge drag
+  // above. Lets the user grab either end of the line and drop it on a
+  // different node to change which node the underlying SystemConnection
+  // (systemFlowEdges.ts) is drawn as terminating at. Purely a diagram
+  // correction — see systemEndpointStorage.ts.
+  const [endpointDrag, setEndpointDrag] = useState<EndpointDrag | null>(null)
 
   if (points.length < 2) return null
 
@@ -88,7 +126,21 @@ export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeP
   const baseWidth = typeof style?.strokeWidth === 'number' ? style.strokeWidth : 2
   const opacity = filterDimmed ? 0.04 : isFocused ? 0.95 : isEclipsed ? 0.04 : 0.18
   const strokeWidth = isFocused ? baseWidth + 1.5 : baseWidth
-  const path = flowingPath(points)
+  const strokeColor = typeof style?.stroke === 'string' ? style.stroke : '#94A3B8'
+  // Endpoint handles stay comfortably visible/grabbable at rest (unlike the
+  // line itself, which is deliberately faint until hovered) — they only fade
+  // when a DIFFERENT node is focused, same as the line, so they don't
+  // clutter the view while the user is inspecting something else.
+  const handleOpacity = filterDimmed ? 0.1 : isEclipsed ? 0.25 : 1
+
+  const previewPoints = endpointDrag
+    ? points.map((p, i) => {
+        if (endpointDrag.end === 'source' && i === 0) return endpointDrag.point
+        if (endpointDrag.end === 'target' && i === points.length - 1) return endpointDrag.point
+        return p
+      })
+    : points
+  const path = flowingPath(previewPoints)
 
   const handlePointerDown = (event: PointerEvent<SVGPathElement>) => {
     event.stopPropagation()
@@ -108,6 +160,39 @@ export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeP
     if (laneKey && onNudgeLane && Math.abs(previewDeltaX) > 0.5) onNudgeLane(laneKey, previewDeltaX)
     setPreviewDeltaX(0)
     event.currentTarget.releasePointerCapture(event.pointerId)
+  }
+
+  const handleEndpointPointerDown = (end: 'source' | 'target') => (event: PointerEvent<SVGCircleElement>) => {
+    event.stopPropagation()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    const point = end === 'source' ? points[0] : points[points.length - 1]
+    setEndpointDrag({ end, point })
+  }
+  const handleEndpointPointerMove = (event: PointerEvent<SVGCircleElement>) => {
+    if (!endpointDrag) return
+    const flowPoint = screenToFlowPosition({ x: event.clientX, y: event.clientY })
+    setEndpointDrag({ ...endpointDrag, point: flowPoint })
+  }
+  const endEndpointDrag = (event: PointerEvent<SVGCircleElement>) => {
+    if (!endpointDrag) return
+    event.currentTarget.releasePointerCapture(event.pointerId)
+    const dropPoint = screenToFlowPosition({ x: event.clientX, y: event.clientY })
+    const otherEndNodeId = endpointDrag.end === 'source' ? target : source
+    const currentNodeId = endpointDrag.end === 'source' ? source : target
+    const foundNode = getNodes().find((n) => {
+      const width = typeof n.measured?.width === 'number' ? n.measured.width : (n.width ?? 0)
+      const height = typeof n.measured?.height === 'number' ? n.measured.height : (n.height ?? 0)
+      return (
+        dropPoint.x >= n.position.x &&
+        dropPoint.x <= n.position.x + width &&
+        dropPoint.y >= n.position.y &&
+        dropPoint.y <= n.position.y + height
+      )
+    })
+    if (foundNode && foundNode.id !== otherEndNodeId && foundNode.id !== currentNodeId && onRetargetEndpoint) {
+      onRetargetEndpoint(connectionId, endpointDrag.end, foundNode.id)
+    }
+    setEndpointDrag(null)
   }
 
   return (
@@ -130,6 +215,38 @@ export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeP
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
         />
+      )}
+      {endpointsEditable && (
+        <>
+          {(['source', 'target'] as const).map((end) => {
+            const isDraggingThis = endpointDrag?.end === end
+            // At rest, set back from the true tap point so the handle isn't
+            // occluded by the node it's touching (see ENDPOINT_HANDLE_SETBACK).
+            // Mid-drag, follow the pointer exactly so the preview tracks the
+            // cursor precisely.
+            const point = isDraggingThis
+              ? endpointDrag.point
+              : end === 'source'
+                ? setBackPoint(points[0], points[1], ENDPOINT_HANDLE_SETBACK)
+                : setBackPoint(points[points.length - 1], points[points.length - 2], ENDPOINT_HANDLE_SETBACK)
+            return (
+              <circle
+                key={end}
+                cx={point.x}
+                cy={point.y}
+                r={ENDPOINT_HANDLE_RADIUS}
+                fill="white"
+                stroke={strokeColor}
+                strokeWidth={2}
+                style={{ cursor: isDraggingThis ? 'grabbing' : 'grab', pointerEvents: 'all', opacity: handleOpacity }}
+                onPointerDown={handleEndpointPointerDown(end)}
+                onPointerMove={handleEndpointPointerMove}
+                onPointerUp={endEndpointDrag}
+                onPointerCancel={endEndpointDrag}
+              />
+            )
+          })}
+        </>
       )}
     </g>
   )

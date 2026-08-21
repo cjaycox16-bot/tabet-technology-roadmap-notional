@@ -31,6 +31,9 @@ interface RoadmapContextValue {
   /** When true, dragging from a stage's connect dots draws a manual connector; when false, dots are hidden and dragging a stage just moves it. */
   connectMode: boolean
   toggleConnectMode: () => void
+  /** Which system category (systemStyle.ts SYSTEM_CATEGORY_ORDER) a newly-drawn manual connector should be styled as; null = generic "Manual" style. */
+  connectorCategory: string | null
+  setConnectorCategory: (category: string | null) => void
   /** Per-stage validation/notes/edits — browser-local, layered on top of the Excel-sourced data. */
   annotations: AnnotationStore
   getAnnotation: (nodeId: string) => NodeAnnotation
@@ -56,6 +59,7 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
   // a dot. Turning this on hides nothing about layout dragging; it only
   // reveals the dots so a drag from one can draw a connector instead.
   const [connectMode, setConnectMode] = useState(false)
+  const [connectorCategory, setConnectorCategory] = useState<string | null>(null)
   const [annotations, setAnnotationsState] = useState<AnnotationStore>(() => loadAnnotations())
 
   const updateAnnotation = (nodeId: string, patch: Partial<NodeAnnotation>) => {
@@ -130,6 +134,8 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
       toggleSystemsOverlay: () => setShowSystemsOverlay((prev) => !prev),
       connectMode,
       toggleConnectMode: () => setConnectMode((prev) => !prev),
+      connectorCategory,
+      setConnectorCategory,
       annotations,
       getAnnotation: (nodeId: string) => getAnnotationFromStore(annotations, nodeId),
       setValidated: (nodeId: string, validated: boolean) => updateAnnotation(nodeId, { validated }),
@@ -137,7 +143,16 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
         updateAnnotation(nodeId, { notes, notesUpdatedAt: new Date().toISOString() }),
       saveEdits: (nodeId: string, edits: NodeEdits) => updateAnnotation(nodeId, { edits }),
     }),
-    [expandedNodeIds, selectedNodeId, hoveredNodeId, filters, showSystemsOverlay, connectMode, annotations],
+    [
+      expandedNodeIds,
+      selectedNodeId,
+      hoveredNodeId,
+      filters,
+      showSystemsOverlay,
+      connectMode,
+      connectorCategory,
+      annotations,
+    ],
   )
 
   return <RoadmapContext.Provider value={value}>{children}</RoadmapContext.Provider>

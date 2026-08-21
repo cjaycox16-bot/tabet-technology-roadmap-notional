@@ -3,6 +3,7 @@ import type { RoadmapData } from '../data/types'
 import { routeSystemEdges } from './routeSystemEdges'
 import { nodeMatchesFilters, systemConnectionMatchesFilters, type FilterState } from './filters'
 import { dasharrayForLineStyle } from './systemStyle'
+import type { SystemEndpointOverrides } from '../persistence/systemEndpointStorage'
 
 export interface NodeBox {
   id: string
@@ -10,6 +11,14 @@ export interface NodeBox {
   y: number
   width: number
   height: number
+}
+
+export interface BuildSystemFlowEdgesOptions {
+  laneOffsets: Record<string, number>
+  onNudgeLane: (laneKey: string, deltaX: number) => void
+  /** Per-connection source/target corrections dragged in via RoutedEdge.tsx's endpoint handles — keyed by SystemConnection.id. */
+  endpointOverrides: SystemEndpointOverrides
+  onRetargetEndpoint: (connectionId: string, end: 'source' | 'target', newNodeId: string) => void
 }
 
 /**
@@ -24,39 +33,49 @@ export interface NodeBox {
  * skipped on the canvas — that handoff is already drawn as the plain
  * process arrow directly below/above, so a second colored line tracing the
  * exact same path is pure redundancy. They're still listed in full in the
- * per-node detail panel; this only trims what's drawn on the canvas.
+ * per-node detail panel; this only trims what's drawn on the canvas. This
+ * dedup check is based on each connection's ORIGINAL source/target (the
+ * canonical, Excel-sourced handoff) rather than any endpoint override — a
+ * diagram-only re-terminus shouldn't change whether the documented handoff
+ * is considered redundant.
  */
 export function buildSystemFlowEdges(
   data: RoadmapData,
   filters: FilterState,
   boxes: NodeBox[],
-  laneOffsets: Record<string, number>,
-  onNudgeLane: (laneKey: string, deltaX: number) => void,
+  options: BuildSystemFlowEdgesOptions,
 ): Edge[] {
+  const { laneOffsets, onNudgeLane, endpointOverrides, onRetargetEndpoint } = options
   const processPairs = new Set(data.edges.map((e) => `${e.source}->${e.target}`))
   const canvasConnections = data.systemConnections.filter((sc) => !processPairs.has(`${sc.source}->${sc.target}`))
+
+  const effectiveEndpoints = new Map(
+    canvasConnections.map((sc) => {
+      const override = endpointOverrides[sc.id]
+      return [sc.id, { source: override?.source ?? sc.source, target: override?.target ?? sc.target }] as const
+    }),
+  )
 
   const matches = new Map(data.nodes.map((n) => [n.id, nodeMatchesFilters(n, filters)]))
   const routes = routeSystemEdges(
     boxes,
-    canvasConnections.map((sc) => ({
-      id: sc.id,
-      source: sc.source,
-      target: sc.target,
-      category: sc.systemCategory,
-    })),
+    canvasConnections.map((sc) => {
+      const { source, target } = effectiveEndpoints.get(sc.id)!
+      return { id: sc.id, source, target, category: sc.systemCategory }
+    }),
     laneOffsets,
   )
 
   return canvasConnections.map((sc) => {
+    const { source, target } = effectiveEndpoints.get(sc.id)!
     const filterDimmed =
-      !matches.get(sc.source) || !matches.get(sc.target) || !systemConnectionMatchesFilters(sc, filters)
+      !matches.get(source) || !matches.get(target) || !systemConnectionMatchesFilters(sc, filters)
     const route = routes.get(sc.id)
 
     return {
       id: sc.id,
-      source: sc.source,
-      target: sc.target,
+      source,
+      target,
       type: 'systemRoute',
       deletable: false,
       selectable: false,
@@ -68,6 +87,8 @@ export function buildSystemFlowEdges(
         points: route?.points ?? [],
         laneKey: route?.laneKey,
         onNudgeLane,
+        onRetargetEndpoint,
+        connectionId: sc.id,
         dasharray: dasharrayForLineStyle(sc.lineStyle),
         filterDimmed,
       },

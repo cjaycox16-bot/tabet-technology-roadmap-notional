@@ -12,6 +12,8 @@ export interface StoredCustomEdge {
   sourceHandle?: string | null
   target: string
   targetHandle?: string | null
+  /** One of SYSTEM_CATEGORY_ORDER (systemStyle.ts), picked at draw time so this connector inherits that category's real styling. Undefined = generic "Manual" style. */
+  category?: string
 }
 
 export interface StoredLayout {
