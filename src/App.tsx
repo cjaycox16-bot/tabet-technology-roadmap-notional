@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { LayoutDashboardIcon } from 'lucide-react'
 import { ReactFlowProvider } from '@xyflow/react'
 import { RoadmapProvider, useRoadmap } from './context/RoadmapContext'
 import { FlowCanvas, type FlowCanvasHandle } from './components/FlowCanvas'
@@ -29,23 +30,26 @@ function AppShell() {
           >
             Technology Roadmap
           </h1>
+
+          <button
+            type="button"
+            onClick={() => setView(view === 'dashboard' ? 'flow' : 'dashboard')}
+            className={`ml-2 flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold uppercase tracking-wide shadow-sm transition-colors ${
+              view === 'dashboard'
+                ? 'bg-white text-[#09295F] hover:bg-white/90'
+                : 'bg-[#C8890A] text-white hover:bg-[#E8A424]'
+            }`}
+            title="Every stage as a card, grouped by process, with validation status and key metrics"
+          >
+            <LayoutDashboardIcon className="size-3.5" />
+            {view === 'dashboard' ? 'Back to flow' : 'Dashboard'}
+          </button>
         </div>
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-[#C8890A]">
             {roadmapData.nodes.length} stages · {roadmapData.systemConnections.length} system connections ·{' '}
             {validatedCount}/{roadmapData.nodes.length} validated
           </span>
-
-          <button
-            type="button"
-            onClick={() => setView(view === 'dashboard' ? 'flow' : 'dashboard')}
-            className={`rounded-full border border-white/25 px-2.5 py-1 text-xs font-medium transition-colors ${
-              view === 'dashboard' ? 'bg-white text-[#09295F]' : 'text-white/80 hover:bg-white/10'
-            }`}
-            title="Every stage as a card, grouped by process, with validation status and key metrics"
-          >
-            {view === 'dashboard' ? '← Back to flow' : 'Dashboard'}
-          </button>
 
           {view === 'flow' && (
             <>
@@ -56,7 +60,7 @@ function AppShell() {
                   className={`rounded-full px-2.5 py-1 transition-colors ${
                     connectMode ? 'text-white/70 hover:bg-white/10' : 'bg-white text-[#09295F]'
                   }`}
-                  title="Drag a stage anywhere on its card to reposition it"
+                  title="Drag a stage anywhere on its card to reposition it, or drag a system/data-flow line to nudge its lane"
                 >
                   Move stages
                 </button>
@@ -76,7 +80,7 @@ function AppShell() {
                 type="button"
                 onClick={() => flowCanvasRef.current?.resetLayout()}
                 className="rounded-full border border-white/25 px-2.5 py-1 text-xs font-medium text-white/80 hover:bg-white/10"
-                title="Discard any boxes you've dragged or connectors you've drawn, and restore the default layout"
+                title="Discard any boxes you've dragged, lanes you've nudged, or connectors you've drawn, and restore the default layout"
               >
                 Reset layout
               </button>

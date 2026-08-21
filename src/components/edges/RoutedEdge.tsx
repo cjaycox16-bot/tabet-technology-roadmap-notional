@@ -1,4 +1,5 @@
-import { BaseEdge, type EdgeProps } from '@xyflow/react'
+import { useRef, useState, type PointerEvent } from 'react'
+import { BaseEdge, useReactFlow, type EdgeProps } from '@xyflow/react'
 import { useRoadmap } from '../../context/RoadmapContext'
 import type { RoutePoint } from '../../layout/routeSystemEdges'
 
@@ -56,12 +57,29 @@ function flowingPath(points: RoutePoint[], radius = CORNER_RADIUS): string {
  * read live from context rather than baked in at layout time — so hovering
  * across 18 stages doesn't require re-running ELK or the bus router, just a
  * cheap re-render of these ~44 edge components.
+ *
+ * Draggable in "Move stages" mode (connectMode off): a wide invisible path
+ * layered on top catches the drag, translating the rendered line live as a
+ * preview; on release it reports one delta to onNudgeLane (FlowCanvas.tsx),
+ * which shifts every connection sharing this lane together and reruns the
+ * real route — so siblings that aren't being dragged snap to match on
+ * release rather than live (keeping the drag itself cheap: one edge
+ * re-rendering per frame instead of every connection on the lane).
  */
 export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeProps) {
-  const { focusNodeId } = useRoadmap()
+  const { focusNodeId, connectMode } = useRoadmap()
+  const { screenToFlowPosition } = useReactFlow()
   const points = (data?.points as RoutePoint[] | undefined) ?? []
   const dasharray = data?.dasharray as string | undefined
   const filterDimmed = Boolean(data?.filterDimmed)
+  const laneKey = data?.laneKey as string | undefined
+  const onNudgeLane = data?.onNudgeLane as ((laneKey: string, deltaX: number) => void) | undefined
+  const draggable = !connectMode && Boolean(laneKey) && Boolean(onNudgeLane)
+
+  const dragStartFlowX = useRef(0)
+  const [dragging, setDragging] = useState(false)
+  const [previewDeltaX, setPreviewDeltaX] = useState(0)
+
   if (points.length < 2) return null
 
   const isFocused = focusNodeId !== null && (source === focusNodeId || target === focusNodeId)
@@ -70,13 +88,49 @@ export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeP
   const baseWidth = typeof style?.strokeWidth === 'number' ? style.strokeWidth : 2
   const opacity = filterDimmed ? 0.04 : isFocused ? 0.95 : isEclipsed ? 0.04 : 0.18
   const strokeWidth = isFocused ? baseWidth + 1.5 : baseWidth
+  const path = flowingPath(points)
+
+  const handlePointerDown = (event: PointerEvent<SVGPathElement>) => {
+    event.stopPropagation()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    dragStartFlowX.current = screenToFlowPosition({ x: event.clientX, y: event.clientY }).x
+    setDragging(true)
+    setPreviewDeltaX(0)
+  }
+  const handlePointerMove = (event: PointerEvent<SVGPathElement>) => {
+    if (!dragging) return
+    const currentFlowX = screenToFlowPosition({ x: event.clientX, y: event.clientY }).x
+    setPreviewDeltaX(currentFlowX - dragStartFlowX.current)
+  }
+  const endDrag = (event: PointerEvent<SVGPathElement>) => {
+    if (!dragging) return
+    setDragging(false)
+    if (laneKey && onNudgeLane && Math.abs(previewDeltaX) > 0.5) onNudgeLane(laneKey, previewDeltaX)
+    setPreviewDeltaX(0)
+    event.currentTarget.releasePointerCapture(event.pointerId)
+  }
 
   return (
-    <BaseEdge
-      id={id}
-      path={flowingPath(points)}
-      markerEnd={markerEnd}
-      style={{ ...style, strokeDasharray: dasharray, opacity, strokeWidth }}
-    />
+    <g transform={dragging ? `translate(${previewDeltaX}, 0)` : undefined}>
+      <BaseEdge
+        id={id}
+        path={path}
+        markerEnd={markerEnd}
+        style={{ ...style, strokeDasharray: dasharray, opacity, strokeWidth }}
+      />
+      {draggable && (
+        <path
+          d={path}
+          fill="none"
+          stroke="transparent"
+          strokeWidth={16}
+          style={{ cursor: dragging ? 'grabbing' : 'ew-resize', pointerEvents: 'stroke' }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+        />
+      )}
+    </g>
   )
 }

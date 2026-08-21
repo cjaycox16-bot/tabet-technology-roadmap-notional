@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import {
   addEdge,
   Background,
@@ -21,6 +21,7 @@ import { computeBaseLayout } from '../layout/computeBaseLayout'
 import { buildSystemFlowEdges } from '../layout/systemFlowEdges'
 import type { FlowNode } from '../layout/buildGraph'
 import { loadLayout, saveLayout, clearLayout, type StoredCustomEdge } from '../persistence/layoutStorage'
+import { loadLaneOffsets, saveLaneOffsets, clearLaneOffsets } from '../persistence/laneOffsetStorage'
 import { useRoadmap } from '../context/RoadmapContext'
 import { PipelineNode } from './nodes/PipelineNode'
 import { RoutedEdge } from './edges/RoutedEdge'
@@ -87,6 +88,15 @@ export function FlowCanvas({
   const undoStack = useRef<UndoAction[]>([])
   const dragStartPositions = useRef(new Map<string, XYPosition>())
 
+  const [laneOffsets, setLaneOffsets] = useState(() => loadLaneOffsets())
+  const nudgeLane = useCallback((laneKey: string, deltaX: number) => {
+    setLaneOffsets((prev) => {
+      const next = { ...prev, [laneKey]: (prev[laneKey] ?? 0) + deltaX }
+      saveLaneOffsets(next)
+      return next
+    })
+  }, [])
+
   const pushUndo = useCallback((action: UndoAction) => {
     undoStack.current.push(action)
     if (undoStack.current.length > UNDO_LIMIT) undoStack.current.shift()
@@ -145,14 +155,16 @@ export function FlowCanvas({
       width: typeof n.style?.width === 'number' ? n.style.width : 300,
       height: typeof n.style?.height === 'number' ? n.style.height : 112,
     }))
-    return buildSystemFlowEdges(data, filters, boxes)
-  }, [data, filters, showSystemsOverlay, nodes])
+    return buildSystemFlowEdges(data, filters, boxes, laneOffsets, nudgeLane)
+  }, [data, filters, showSystemsOverlay, nodes, laneOffsets, nudgeLane])
 
   const renderedEdges = useMemo(() => [...edges, ...systemEdges], [edges, systemEdges])
 
   useImperativeHandle(handleRef, () => ({
     resetLayout: () => {
       clearLayout()
+      clearLaneOffsets()
+      setLaneOffsets({})
       undoStack.current = []
       dragStartPositions.current.clear()
       applyBaseLayout()

@@ -3,6 +3,12 @@ export interface RoutePoint {
   y: number
 }
 
+export interface RoutedEdgeResult {
+  points: RoutePoint[]
+  /** `${category}::${componentRoot}` — the lane this edge shares with the rest of its fan-out/fan-in group; see laneOffsetStorage.ts. */
+  laneKey: string
+}
+
 interface NodeBox {
   id: string
   x: number
@@ -153,9 +159,18 @@ function groupIntoComponents(edges: SystemEdgeInput[]): Map<string, string> {
  * Node positions are taken as given (from elkLayout's process-flow-only
  * pass, or live drag positions from FlowCanvas) and never modified — this
  * only computes edge paths.
+ *
+ * `laneOffsets` is a per-lane horizontal nudge the user has dragged in
+ * (RoutedEdge.tsx), keyed by the same lane key this function assigns —
+ * applied on top of the automatic position so every connection sharing a
+ * lane moves together, the same grouping that keeps them deduplicated.
  */
-export function routeSystemEdges(nodes: NodeBox[], edges: SystemEdgeInput[]): Map<string, RoutePoint[]> {
-  const routes = new Map<string, RoutePoint[]>()
+export function routeSystemEdges(
+  nodes: NodeBox[],
+  edges: SystemEdgeInput[],
+  laneOffsets: Record<string, number> = {},
+): Map<string, RoutedEdgeResult> {
+  const routes = new Map<string, RoutedEdgeResult>()
   if (nodes.length === 0) return routes
 
   const byId = new Map(nodes.map((n) => [n.id, n]))
@@ -190,7 +205,8 @@ export function routeSystemEdges(nodes: NodeBox[], edges: SystemEdgeInput[]): Ma
       laneIndex[side] += 1
     }
     const index = componentLane.get(component) as number
-    return side === 'right' ? maxX + LANE_GAP + index * LANE_SPACING : minX - LANE_GAP - index * LANE_SPACING
+    const base = side === 'right' ? maxX + LANE_GAP + index * LANE_SPACING : minX - LANE_GAP - index * LANE_SPACING
+    return base + (laneOffsets[component] ?? 0)
   }
 
   for (const edge of ordered) {
@@ -224,7 +240,7 @@ export function routeSystemEdges(nodes: NodeBox[], edges: SystemEdgeInput[]): Ma
     if (targetLaneY !== targetStub.y) points.push({ x: targetStub.x, y: targetLaneY })
     points.push(targetStub, targetTap)
 
-    routes.set(edge.id, points)
+    routes.set(edge.id, { points, laneKey: edgeComponent.get(edge.id) ?? edge.id })
   }
 
   return routes

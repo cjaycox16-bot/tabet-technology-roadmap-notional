@@ -9,22 +9,41 @@ import { NodeDetailPanel } from './NodeDetailPanel'
 
 type StatusFilter = 'all' | 'pending' | 'validated'
 
-function StatTile({ label, value, accent }: { label: string; value: string | number; accent?: string }) {
+const MONO = "ui-monospace, 'SFMono-Regular', 'Cascadia Code', Consolas, monospace"
+const PANEL = '#111E33'
+const PANEL_BORDER = '#233A57'
+const TEXT_BRIGHT = '#EAF1F9'
+const TEXT_MUTED = '#7E93B3'
+const TEXT_FAINT = '#5C7395'
+const TEAL = '#0AACE0'
+const GREEN = '#22C55E'
+const GOLD = '#E8A424'
+
+/** A compact instrument readout: thin colored accent bar, a small caps label, a monospace value. */
+function StatTile({ label, value, accent }: { label: string; value: string | number; accent: string }) {
   return (
-    <div className="rounded-lg border border-[#D0DCE8] bg-white px-4 py-3">
-      <p className="text-xs font-medium text-[#6B82A0]">{label}</p>
-      <p className="mt-1 text-2xl font-semibold" style={{ color: accent ?? '#0B1523' }}>
-        {value}
-      </p>
+    <div className="flex items-stretch overflow-hidden rounded-md" style={{ background: PANEL, border: `1px solid ${PANEL_BORDER}` }}>
+      <div className="w-1 shrink-0" style={{ background: accent }} />
+      <div className="px-3.5 py-3">
+        <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: TEXT_MUTED }}>
+          {label}
+        </p>
+        <p className="mt-1 text-xl font-semibold" style={{ color: TEXT_BRIGHT, fontFamily: MONO }}>
+          {value}
+        </p>
+      </div>
     </div>
   )
 }
 
 /**
  * The full-page counterpart to the old modal dashboard: same validate/edit/
- * notes machinery (NodeDetailPanel, unchanged), but laid out with room to
- * breathe — a metrics strip, then every stage as a card grouped by lane
- * (the shop-flow's natural process grouping) instead of one long list.
+ * notes machinery (NodeDetailPanel, unchanged), styled as a shop-floor
+ * command center — dark instrument panels and a validation-progress meter up
+ * top, cards grouped into lane "panels" below. The one deliberately loud
+ * move is the expanded card: it lights up as a bright active readout against
+ * the dark shell, like switching on a console screen, rather than blending
+ * into the same dark surface as everything ambient around it.
  */
 export function DashboardPage({ data }: { data: RoadmapData }) {
   const { annotations } = useRoadmap()
@@ -32,6 +51,7 @@ export function DashboardPage({ data }: { data: RoadmapData }) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const validatedCount = data.nodes.filter((n) => annotations.nodes[n.id]?.validated).length
+  const validatedPct = Math.round((validatedCount / data.nodes.length) * 100)
   const opportunityCount = useMemo(
     () =>
       data.nodes.filter((n) => {
@@ -59,14 +79,41 @@ export function DashboardPage({ data }: { data: RoadmapData }) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#F0F5FA] px-6 py-5">
+    <div
+      className="flex-1 overflow-y-auto px-6 py-5"
+      style={{
+        background: '#0A1628',
+        backgroundImage:
+          'linear-gradient(rgba(234,241,249,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(234,241,249,0.035) 1px, transparent 1px)',
+        backgroundSize: '32px 32px',
+      }}
+    >
       <div className="mx-auto max-w-[1400px]">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          <StatTile label="Total stages" value={data.nodes.length} />
-          <StatTile label="Validated" value={`${validatedCount} (${Math.round((validatedCount / data.nodes.length) * 100)}%)`} accent="#047857" />
-          <StatTile label="Pending validation" value={data.nodes.length - validatedCount} accent="#C8890A" />
-          <StatTile label="System connections" value={data.systemConnections.length} />
-          <StatTile label="Automation opportunities noted" value={opportunityCount} accent="#17499F" />
+        {/* Hero: validation progress is the one number this page leads with. */}
+        <div className="rounded-lg px-5 py-4" style={{ background: PANEL, border: `1px solid ${PANEL_BORDER}` }}>
+          <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: TEAL }}>
+            Validation progress
+          </p>
+          <div className="mt-1 flex items-baseline gap-3">
+            <span className="text-5xl font-semibold" style={{ color: TEXT_BRIGHT, fontFamily: MONO }}>
+              {validatedCount}/{data.nodes.length}
+            </span>
+            <span className="text-lg" style={{ color: TEXT_MUTED, fontFamily: MONO }}>
+              {validatedPct}% complete
+            </span>
+          </div>
+          <div className="mt-3 h-2 overflow-hidden rounded-full" style={{ background: 'rgba(10,172,224,0.14)' }}>
+            <div
+              className="h-full rounded-full transition-[width]"
+              style={{ width: `${validatedPct}%`, background: TEAL, boxShadow: `0 0 8px ${TEAL}` }}
+            />
+          </div>
+        </div>
+
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <StatTile label="Total stages" value={data.nodes.length} accent={TEXT_FAINT} />
+          <StatTile label="System connections" value={data.systemConnections.length} accent={TEAL} />
+          <StatTile label="Automation opportunities noted" value={opportunityCount} accent={GOLD} />
         </div>
 
         <div className="mt-5 flex items-center gap-1.5">
@@ -75,18 +122,19 @@ export function DashboardPage({ data }: { data: RoadmapData }) {
               key={f}
               type="button"
               onClick={() => setStatusFilter(f)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+              className="rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
+              style={
                 statusFilter === f
-                  ? 'border-[#09295F] bg-[#09295F] text-white'
-                  : 'border-[#D0DCE8] bg-white text-[#3D5168] hover:bg-[#F0F5FA]'
-              }`}
+                  ? { background: TEAL, color: '#04202E', border: `1px solid ${TEAL}` }
+                  : { background: 'transparent', color: TEXT_MUTED, border: `1px solid ${PANEL_BORDER}` }
+              }
             >
               {f === 'all' ? 'All stages' : f === 'pending' ? 'Pending' : 'Validated'}
             </button>
           ))}
         </div>
 
-        <div className="mt-5 space-y-8">
+        <div className="mt-6 space-y-7">
           {data.lanes.map((lane) => {
             const laneNodes = (nodesByLane.get(lane) ?? []).filter((n) => matchesFilter(n.id))
             if (laneNodes.length === 0) return null
@@ -94,14 +142,20 @@ export function DashboardPage({ data }: { data: RoadmapData }) {
 
             return (
               <section key={lane}>
-                <div className="flex items-baseline gap-2">
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-[#3D5168]">{lane}</h2>
-                  <span className="text-xs text-[#94A3B8]">
-                    {laneValidated} of {laneNodes.length} validated
+                <div className="flex items-center gap-3">
+                  <h2
+                    className="shrink-0 text-xs font-bold uppercase tracking-wider"
+                    style={{ color: TEXT_BRIGHT, fontFamily: 'var(--font-heading)' }}
+                  >
+                    {lane}
+                  </h2>
+                  <div className="h-px flex-1" style={{ background: PANEL_BORDER }} />
+                  <span className="shrink-0 text-[11px]" style={{ color: TEXT_FAINT, fontFamily: MONO }}>
+                    {laneValidated}/{laneNodes.length} validated
                   </span>
                 </div>
 
-                <div className="mt-2.5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {laneNodes.map((node) => {
                     const validated = Boolean(annotations.nodes[node.id]?.validated)
                     const role = ROLE_STYLE[node.role]
@@ -111,31 +165,45 @@ export function DashboardPage({ data }: { data: RoadmapData }) {
                         key={node.id}
                         type="button"
                         onClick={() => setExpandedId(isExpanded ? null : node.id)}
-                        className={`flex items-start gap-2.5 rounded-lg border bg-white px-3.5 py-3 text-left transition-shadow hover:shadow-md ${
-                          isExpanded ? 'border-[#17499F] shadow-md' : 'border-[#D0DCE8]'
-                        }`}
+                        className="flex items-start gap-2.5 rounded-md px-3.5 py-3 text-left transition-colors"
+                        style={{
+                          background: PANEL,
+                          border: `1px solid ${isExpanded ? TEAL : PANEL_BORDER}`,
+                          boxShadow: isExpanded ? `0 0 0 1px ${TEAL}` : undefined,
+                        }}
                       >
                         <span
-                          className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[10px] font-bold text-white"
-                          style={{ background: role.accent }}
+                          className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                          style={{ background: role.accent, fontFamily: MONO }}
                         >
                           {node.key}
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-medium text-[#0B1523]">{node.label}</span>
-                          <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-wide" style={{ color: role.accent }}>
+                          <span className="block text-sm font-medium" style={{ color: TEXT_BRIGHT }}>
+                            {node.label}
+                          </span>
+                          <span className="mt-0.5 flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide" style={{ color: TEXT_MUTED }}>
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: role.accent }} />
                             {role.label}
                           </span>
                           <span
-                            className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                              validated ? 'bg-[#047857] text-white' : 'bg-[#FBF1E0] text-[#7A5205]'
-                            }`}
+                            className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium"
+                            style={{ color: validated ? GREEN : TEXT_MUTED }}
                           >
-                            {validated ? '✓ Validated' : 'Pending'}
+                            <span
+                              className="h-2 w-2 shrink-0 rounded-full"
+                              style={{
+                                background: validated ? GREEN : 'transparent',
+                                border: validated ? 'none' : `1.5px solid ${GOLD}`,
+                                boxShadow: validated ? `0 0 6px ${GREEN}` : undefined,
+                              }}
+                            />
+                            {validated ? 'Validated' : 'Pending'}
                           </span>
                         </span>
                         <ChevronDownIcon
-                          className={`mt-1 size-4 shrink-0 text-[#94A3B8] transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                          className="mt-1 size-4 shrink-0 transition-transform"
+                          style={{ color: TEXT_FAINT, transform: isExpanded ? 'rotate(180deg)' : undefined }}
                         />
                       </button>
                     )
@@ -143,7 +211,10 @@ export function DashboardPage({ data }: { data: RoadmapData }) {
                 </div>
 
                 {laneNodes.some((n) => n.id === expandedId) && (
-                  <div className="mt-3 rounded-lg border border-[#D0DCE8] bg-white px-5 py-4">
+                  <div
+                    className="mt-3 rounded-lg bg-white px-5 py-4"
+                    style={{ boxShadow: `0 0 0 2px ${TEAL}, 0 0 32px rgba(10,172,224,0.35)` }}
+                  >
                     <NodeDetailPanel data={data} id={expandedId as string} />
                   </div>
                 )}

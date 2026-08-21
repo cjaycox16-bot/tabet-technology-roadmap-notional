@@ -26,7 +26,13 @@ export interface NodeBox {
  * exact same path is pure redundancy. They're still listed in full in the
  * per-node detail panel; this only trims what's drawn on the canvas.
  */
-export function buildSystemFlowEdges(data: RoadmapData, filters: FilterState, boxes: NodeBox[]): Edge[] {
+export function buildSystemFlowEdges(
+  data: RoadmapData,
+  filters: FilterState,
+  boxes: NodeBox[],
+  laneOffsets: Record<string, number>,
+  onNudgeLane: (laneKey: string, deltaX: number) => void,
+): Edge[] {
   const processPairs = new Set(data.edges.map((e) => `${e.source}->${e.target}`))
   const canvasConnections = data.systemConnections.filter((sc) => !processPairs.has(`${sc.source}->${sc.target}`))
 
@@ -39,11 +45,13 @@ export function buildSystemFlowEdges(data: RoadmapData, filters: FilterState, bo
       target: sc.target,
       category: sc.systemCategory,
     })),
+    laneOffsets,
   )
 
   return canvasConnections.map((sc) => {
     const filterDimmed =
       !matches.get(sc.source) || !matches.get(sc.target) || !systemConnectionMatchesFilters(sc, filters)
+    const route = routes.get(sc.id)
 
     return {
       id: sc.id,
@@ -56,7 +64,13 @@ export function buildSystemFlowEdges(data: RoadmapData, filters: FilterState, bo
       // Opacity/weight are computed live in RoutedEdge from hover/selection
       // state, not baked in here — that's what lets hovering a stage
       // highlight just its own connections without recomputing routes.
-      data: { points: routes.get(sc.id) ?? [], dasharray: dasharrayForLineStyle(sc.lineStyle), filterDimmed },
+      data: {
+        points: route?.points ?? [],
+        laneKey: route?.laneKey,
+        onNudgeLane,
+        dasharray: dasharrayForLineStyle(sc.lineStyle),
+        filterDimmed,
+      },
       style: { stroke: sc.lineColor, strokeWidth: sc.lineWidth },
       markerEnd: { type: MarkerType.ArrowClosed, color: sc.lineColor, width: 14, height: 14 },
     }
