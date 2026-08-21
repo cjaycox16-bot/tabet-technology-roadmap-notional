@@ -108,6 +108,17 @@ export function FlowCanvas({
   const undoStack = useRef<UndoAction[]>([])
   const dragStartPositions = useRef(new Map<string, XYPosition>())
 
+  // Draw-connectors mode: PipelineNode.tsx stacks a `source`-type and a
+  // `target`-type Handle at every one of a node's 8 connect points, so a
+  // drag can start in any direction under React Flow's strict
+  // ConnectionMode. Whichever type happens to win the pointer hit-test on
+  // press-down decides how React Flow reports connection.source/target —
+  // sometimes backwards from the actual drag direction. Tracking the true
+  // start point here lets handleConnect normalize so the arrow always ends
+  // up pointing at the node the user released on, not whichever end React
+  // Flow happened to call "target".
+  const connectStartRef = useRef<{ nodeId: string; handleId: string | null } | null>(null)
+
   const [laneOffsets, setLaneOffsets] = useState(() => loadLaneOffsets())
   const nudgeLane = useCallback((laneKey: string, deltaX: number) => {
     setLaneOffsets((prev) => {
@@ -259,12 +270,25 @@ export function FlowCanvas({
 
   const handleConnect = useCallback(
     (connection: Connection) => {
+      const start = connectStartRef.current
+      connectStartRef.current = null
+      // If the drag-start point got assigned as connection.target (i.e. its
+      // stacked `target`-type handle won the initial hit-test), swap the
+      // ends so the arrow still points at the node the user actually
+      // released on rather than the one they dragged from.
+      const swapped =
+        start !== null && start.nodeId === connection.target && start.handleId === connection.targetHandle
+      const source = swapped ? connection.target : connection.source
+      const sourceHandle = swapped ? connection.targetHandle : connection.sourceHandle
+      const target = swapped ? connection.source : connection.target
+      const targetHandle = swapped ? connection.sourceHandle : connection.targetHandle
+
       const customEdge: StoredCustomEdge = {
         id: `custom-${crypto.randomUUID()}`,
-        source: connection.source,
-        sourceHandle: connection.sourceHandle,
-        target: connection.target,
-        targetHandle: connection.targetHandle,
+        source,
+        sourceHandle,
+        target,
+        targetHandle,
         category: connectorCategory ?? undefined,
       }
       setEdges((eds) => addEdge(customEdgeToFlowEdge(customEdge, categoryStyles), eds))
@@ -321,6 +345,12 @@ export function FlowCanvas({
       onNodesChange={handleNodesChange}
       onEdgesChange={handleEdgesChange}
       onConnect={handleConnect}
+      onConnectStart={(_event, params) => {
+        connectStartRef.current = { nodeId: params.nodeId ?? '', handleId: params.handleId ?? null }
+      }}
+      onConnectEnd={() => {
+        connectStartRef.current = null
+      }}
       onNodeDragStart={(_event, _node, draggedNodes) => {
         // Third param is every node moving in this drag, not just the one
         // the gesture started on — a Ctrl-selected group included.

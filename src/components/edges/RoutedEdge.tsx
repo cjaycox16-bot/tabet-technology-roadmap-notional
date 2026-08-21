@@ -90,6 +90,20 @@ function setBackPoint(tap: RoutePoint, next: RoutePoint, distance: number): Rout
   return { x: tap.x + (dx / length) * d, y: tap.y + (dy / length) * d }
 }
 
+/**
+ * Offset perpendicular to the a->b segment, scaled by `offset` — used to fan
+ * apart endpoint handles that share the exact same node+side tap point (see
+ * systemFlowEdges.ts's computeHandleFanOffsets) into a small visible cluster
+ * instead of a single occluded stack.
+ */
+function perpendicularOffset(a: RoutePoint, b: RoutePoint, offset: number): RoutePoint {
+  const dx = b.x - a.x
+  const dy = b.y - a.y
+  const len = Math.hypot(dx, dy)
+  if (len === 0 || offset === 0) return { x: 0, y: 0 }
+  return { x: (-dy / len) * offset, y: (dx / len) * offset }
+}
+
 type EndpointDrag = { end: 'source' | 'target'; point: RoutePoint }
 
 export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeProps) {
@@ -104,6 +118,8 @@ export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeP
     | ((connectionId: string, end: 'source' | 'target', newNodeId: string) => void)
     | undefined
   const connectionId = (data?.connectionId as string | undefined) ?? id
+  const sourceHandleOffset = (data?.sourceHandleOffset as number | undefined) ?? 0
+  const targetHandleOffset = (data?.targetHandleOffset as number | undefined) ?? 0
   const draggable = !connectMode && Boolean(laneKey) && Boolean(onNudgeLane)
   const endpointsEditable = !connectMode && Boolean(onRetargetEndpoint)
 
@@ -227,8 +243,20 @@ export function RoutedEdge({ id, source, target, data, markerEnd, style }: EdgeP
             const point = isDraggingThis
               ? endpointDrag.point
               : end === 'source'
-                ? setBackPoint(points[0], points[1], ENDPOINT_HANDLE_SETBACK)
-                : setBackPoint(points[points.length - 1], points[points.length - 2], ENDPOINT_HANDLE_SETBACK)
+                ? (() => {
+                    const setBack = setBackPoint(points[0], points[1], ENDPOINT_HANDLE_SETBACK)
+                    const fan = perpendicularOffset(points[0], points[1], sourceHandleOffset)
+                    return { x: setBack.x + fan.x, y: setBack.y + fan.y }
+                  })()
+                : (() => {
+                    const setBack = setBackPoint(
+                      points[points.length - 1],
+                      points[points.length - 2],
+                      ENDPOINT_HANDLE_SETBACK,
+                    )
+                    const fan = perpendicularOffset(points[points.length - 1], points[points.length - 2], targetHandleOffset)
+                    return { x: setBack.x + fan.x, y: setBack.y + fan.y }
+                  })()
             return (
               <circle
                 key={end}

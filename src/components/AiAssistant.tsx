@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState, useEffect } from 'react'
 import Anthropic from '@anthropic-ai/sdk'
-import { SparklesIcon, XIcon, SendIcon } from 'lucide-react'
+import { SparklesIcon, XIcon, SendIcon, Maximize2Icon, Minimize2Icon } from 'lucide-react'
 import type { RoadmapData } from '../data/types'
 import { summarizeRoadmapForAi } from '../data/summarizeForAi'
 import { loadApiKey, saveApiKey, clearApiKey } from '../persistence/aiSettings'
@@ -32,6 +32,7 @@ function systemPromptFor(data: RoadmapData): string {
  */
 export function AiAssistant({ data }: { data: RoadmapData }) {
   const [open, setOpen] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const [apiKey, setApiKey] = useState(() => loadApiKey())
   const [keyDraft, setKeyDraft] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -99,11 +100,27 @@ export function AiAssistant({ data }: { data: RoadmapData }) {
       </button>
 
       {open && (
-        <div className="fixed bottom-20 right-5 z-40 flex h-[520px] w-[380px] max-w-[90vw] flex-col overflow-hidden rounded-lg border border-[#D0DCE8] bg-white shadow-2xl">
+        <div
+          className={`fixed bottom-20 right-5 z-40 flex flex-col overflow-hidden rounded-lg border border-[#D0DCE8] bg-white shadow-2xl ${
+            expanded
+              ? 'h-[50vh] max-h-[calc(100vh-160px)] w-[50vw] max-w-[90vw]'
+              : 'h-[520px] w-[380px] max-w-[90vw]'
+          }`}
+        >
           <div className="flex items-center justify-between border-b border-[#E8EFF6] bg-[#09295F] px-3.5 py-2.5">
-            <p className="flex items-center gap-1.5 text-sm font-semibold text-white">
-              <SparklesIcon className="size-4" /> Roadmap assistant
-            </p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setExpanded((v) => !v)}
+                title={expanded ? 'Collapse' : 'Expand'}
+                className="text-white/70 hover:text-white"
+              >
+                {expanded ? <Minimize2Icon className="size-4" /> : <Maximize2Icon className="size-4" />}
+              </button>
+              <p className="flex items-center gap-1.5 text-sm font-semibold text-white">
+                <SparklesIcon className="size-4" /> Roadmap assistant
+              </p>
+            </div>
             {apiKey && (
               <button
                 type="button"
